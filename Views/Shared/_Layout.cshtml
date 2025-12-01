@@ -32,7 +32,6 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Products</a>
                         </li>
 
-                        
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Cart" asp-action="Index">Cart</a>
                         </li>
@@ -40,10 +39,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-
                     </ul>
-                    </ul>
-
 
                     <ul class="navbar-nav ms-auto">
                         @if (User.Identity?.IsAuthenticated == true)
@@ -53,6 +49,11 @@
                                     @User.Identity.Name
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                    }
                                         <li>
                                             <form asp-controller="Account" asp-action="Logout" method="post">
                                                 <button type="submit" class="dropdown-item">Logout</button>

@@ -1,0 +1,102 @@
+﻿@model BlogEcommerce.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Order #@Model.Id</h1>
+        <a asp-action="Orders" class="btn btn-secondary">Back to Orders</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Order Items -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Order Items</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                    <tr>
+                                        <td>@item.Product?.Name</td>
+                                        <td>$@item.Price.ToString("N2")</td>
+                                        <td>@item.Quantity</td>
+                                        <td>$@((item.Price * item.Quantity).ToString("N2"))</td>
+                                    </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                <td><strong>$@Model.TotalAmount.ToString("N2")</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Customer Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Customer Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> @Model.CustomerName</p>
+                    <p><strong>Email:</strong> @Model.Email</p>
+                    <p><strong>Phone:</strong> @Model.Phone</p>
+                    <p><strong>Address:</strong><br />
+                        @Model.Address<br />
+                        @Model.City, @Model.ZipCode
+                    </p>
+                </div>
+            </div>
+
+            <!-- Order Status -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Order Status</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Order Date:</strong> @Model.OrderDate.ToString("MMMM dd, yyyy")</p>
+                    <p><strong>Current Status:</strong> 
+                        <span class="badge bg-@(Model.Status == "Pending" ? "warning" : Model.Status == "Completed" ? "success" : Model.Status == "Shipped" ? "info" : "secondary")">
+                            @Model.Status
+                        </span>
+                    </p>
+
+                    <hr />
+
+                    <form asp-action="UpdateOrderStatus" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <div class="mb-3">
+                            <label class="form-label">Update Status:</label>
+                            <select name="status" class="form-select">
+                                <option value="Pending" selected="@(Model.Status == "Pending")">Pending</option>
+                                <option value="Processing" selected="@(Model.Status == "Processing")">Processing</option>
+                                <option value="Shipped" selected="@(Model.Status == "Shipped")">Shipped</option>
+                                <option value="Completed" selected="@(Model.Status == "Completed")">Completed</option>
+                                <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Cancelled</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Update Status</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

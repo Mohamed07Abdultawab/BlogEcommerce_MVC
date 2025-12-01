@@ -33,6 +33,9 @@ namespace BlogEcommerce.Controllers
 
                 if (result.Succeeded)
                 {
+                    // Assign Customer role to new users
+                    await _userManager.AddToRoleAsync(user, "Customer");
+
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
@@ -79,6 +82,12 @@ namespace BlogEcommerce.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        // GET: Account/AccessDenied
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }
