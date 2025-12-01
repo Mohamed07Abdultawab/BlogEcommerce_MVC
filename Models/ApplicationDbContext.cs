@@ -19,5 +19,6 @@ namespace BlogEcommerce.Models
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<ProductReview> ProductReviews { get; set; }
+        public DbSet<BlogComment> BlogComments { get; set; }
     }
 }

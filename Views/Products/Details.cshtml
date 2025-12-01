@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = Model.Name;
+    var averageRating = ViewBag.AverageRating ?? 0;
+    var totalReviews = ViewBag.TotalReviews ?? 0;
 }
 
 <div class="container mt-4">
@@ -24,6 +26,27 @@
                     <span class="badge bg-info mb-3">@Model.Category</span>
             }
 
+            <!-- Rating Display -->
+            @if (totalReviews > 0)
+            {
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= averageRating)
+                            {
+                                            <span class="text-warning">★</span>
+                            }
+                            else
+                            {
+                                            <span class="text-muted">★</span>
+                            }
+                        }
+                            <span class="ms-2">@averageRating.ToString("0.0") out of 5 (@totalReviews reviews)</span>
+                        </div>
+                    </div>
+            }
+
             <h2 class="text-primary mb-4">$@Model.Price.ToString("N2")</h2>
 
             <p class="lead">@Model.Description</p>
@@ -43,13 +66,13 @@
             <div class="d-grid gap-2 d-md-flex">
                 @if (Model.Stock > 0)
                 {
-                    <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">
-                        <input type="hidden" name="productId" value="@Model.Id" />
-                        <div class="input-group mb-3" style="max-width: 300px;">
-                            <input type="number" name="quantity" value="1" min="1" max="@Model.Stock" class="form-control" />
-                            <button type="submit" class="btn btn-success">Add to Cart</button>
-                        </div>
-                    </form>
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <div class="input-group mb-3" style="max-width: 300px;">
+                                <input type="number" name="quantity" value="1" min="1" max="@Model.Stock" class="form-control" />
+                                <button type="submit" class="btn btn-success">Add to Cart</button>
+                            </div>
+                        </form>
                 }
                 else
                 {
@@ -58,12 +81,109 @@
                 <a asp-action="Index" class="btn btn-outline-secondary btn-lg">Back to Products</a>
             </div>
 
-            <hr class="my-4">
+            @if (User.IsInRole("Admin"))
+            {
+                    <hr class="my-4">
+                    <div class="d-flex gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit Product</a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Delete Product</a>
+                    </div>
+            }
+        </div>
+    </div>
 
-            <div class="d-flex gap-2">
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit Product</a>
-                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Delete Product</a>
-            </div>
+    <hr class="my-5">
+
+    <!-- Reviews Section -->
+    <div class="row">
+        <div class="col-12">
+            <h3>Customer Reviews</h3>
+
+            <!-- Add Review Form -->
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Write a Review</h5>
+                            <form asp-action="AddReview" method="post">
+                                <input type="hidden" name="productId" value="@Model.Id" />
+
+                                <div class="mb-3">
+                                    <label class="form-label">Rating</label>
+                                    <div class="rating-input">
+                                        <div class="btn-group" role="group">
+                                            <input type="radio" class="btn-check" name="rating" id="rating1" value="1" required>
+                                            <label class="btn btn-outline-warning" for="rating1">1 ★</label>
+
+                                            <input type="radio" class="btn-check" name="rating" id="rating2" value="2">
+                                            <label class="btn btn-outline-warning" for="rating2">2 ★</label>
+
+                                            <input type="radio" class="btn-check" name="rating" id="rating3" value="3">
+                                            <label class="btn btn-outline-warning" for="rating3">3 ★</label>
+
+                                            <input type="radio" class="btn-check" name="rating" id="rating4" value="4">
+                                            <label class="btn btn-outline-warning" for="rating4">4 ★</label>
+
+                                            <input type="radio" class="btn-check" name="rating" id="rating5" value="5" checked>
+                                            <label class="btn btn-outline-warning" for="rating5">5 ★</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="comment" class="form-label">Your Review</label>
+                                    <textarea name="comment" id="comment" class="form-control" rows="4" required></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                            </form>
+                        </div>
+                    </div>
+            }
+            else
+            {
+                    <div class="alert alert-info">
+                        <a asp-controller="Account" asp-action="Login">Login</a> to write a review.
+                    </div>
+            }
+
+            <!-- Display Reviews -->
+            @if (Model.Reviews.Any())
+            {
+                    <div class="reviews-list">
+                    @foreach (var review in Model.Reviews.OrderByDescending(r => r.ReviewDate))
+                    {
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="card-subtitle mb-2">@review.UserName</h6>
+                                                <div class="mb-2">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= review.Rating)
+                                                {
+                                                                    <span class="text-warning">★</span>
+                                                }
+                                                else
+                                                {
+                                                                    <span class="text-muted">★</span>
+                                                }
+                                            }
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">@review.ReviewDate.ToString("MMM dd, yyyy")</small>
+                                        </div>
+                                        <p class="card-text mt-2">@review.Comment</p>
+                                    </div>
+                                </div>
+                    }
+                    </div>
+            }
+            else
+            {
+                    <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+            }
         </div>
     </div>
 </div>

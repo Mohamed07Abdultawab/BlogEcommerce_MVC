@@ -58,7 +58,10 @@ namespace BlogEcommerce.Controllers
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPosts.FirstOrDefaultAsync(m => m.Id == id);
+            var blogPost = await _context.BlogPosts
+                .Include(b => b.Comments)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (blogPost == null)
             {
                 return NotFound();
@@ -66,6 +69,31 @@ namespace BlogEcommerce.Controllers
 
             return View(blogPost);
         }
+
+        // POST: Blog/AddComment
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddComment(int blogPostId, string comment)
+        {
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var blogComment = new BlogComment
+            {
+                BlogPostId = blogPostId,
+                UserName = User.Identity.Name ?? "Anonymous",
+                Comment = comment,
+                CommentDate = DateTime.Now
+            };
+
+            _context.BlogComments.Add(blogComment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { id = blogPostId });
+        }
+
 
         // GET: Blog/Create
         public IActionResult Create()
