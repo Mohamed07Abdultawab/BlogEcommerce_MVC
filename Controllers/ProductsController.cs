@@ -21,12 +21,6 @@ namespace BlogEcommerce.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Products.ToListAsync());
-        }
-
-        // GET: Products
         public async Task<IActionResult> Index(string searchString, string category, int? page)
         {
             int pageSize = 9; // Products per page

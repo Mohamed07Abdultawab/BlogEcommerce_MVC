@@ -16,13 +16,6 @@ namespace BlogEcommerce.Controllers
         }
 
         // GET: Blog
-        public async Task<IActionResult> Index()
-        {
-            var posts = await _context.BlogPosts.OrderByDescending(p => p.CreatedDate).ToListAsync();
-            return View(posts);
-        }
-
-        // GET: Blog
         public async Task<IActionResult> Index(string searchString, string category, int? page)
         {
             int pageSize = 6; // Posts per page
