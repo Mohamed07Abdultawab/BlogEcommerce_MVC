@@ -24,6 +24,33 @@ namespace BlogEcommerce.Controllers
             return View(await _context.Products.ToListAsync());
         }
 
+        // GET: Products
+        public async Task<IActionResult> Index(string searchString, string category)
+        {
+            var products = from p in _context.Products
+                           select p;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                products = products.Where(p => p.Name.Contains(searchString)
+                                            || p.Description.Contains(searchString));
+            }
+
+            if (!String.IsNullOrEmpty(category))
+            {
+                products = products.Where(p => p.Category == category);
+            }
+
+            // Get distinct categories for filter
+            ViewBag.Categories = await _context.Products
+                .Where(p => !string.IsNullOrEmpty(p.Category))
+                .Select(p => p.Category)
+                .Distinct()
+                .ToListAsync();
+
+            return View(await products.ToListAsync());
+        }
+
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -33,13 +60,53 @@ namespace BlogEcommerce.Controllers
             }
 
             var product = await _context.Products
+                .Include(p => p.Reviews)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (product == null)
             {
                 return NotFound();
             }
 
+            // Calculate average rating
+            if (product.Reviews.Any())
+            {
+                ViewBag.AverageRating = product.Reviews.Average(r => r.Rating);
+                ViewBag.TotalReviews = product.Reviews.Count;
+            }
+            else
+            {
+                ViewBag.AverageRating = 0;
+                ViewBag.TotalReviews = 0;
+            }
+
             return View(product);
+        }
+
+
+        // POST: Products/AddReview
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddReview(int productId, int rating, string comment)
+        {
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var review = new ProductReview
+            {
+                ProductId = productId,
+                UserName = User.Identity.Name ?? "Anonymous",
+                Rating = rating,
+                Comment = comment,
+                ReviewDate = DateTime.Now
+            };
+
+            _context.ProductReviews.Add(review);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { id = productId });
         }
 
         // GET: Products/Create

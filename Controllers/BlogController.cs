@@ -20,6 +20,36 @@ namespace BlogEcommerce.Controllers
             return View(posts);
         }
 
+        // GET: Blog
+        public async Task<IActionResult> Index(string searchString, string category)
+        {
+            var posts = from p in _context.BlogPosts
+                        select p;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                posts = posts.Where(p => p.Title.Contains(searchString)
+                                        || p.Content.Contains(searchString)
+                                        || p.Author.Contains(searchString));
+            }
+
+            if (!String.IsNullOrEmpty(category))
+            {
+                posts = posts.Where(p => p.Category == category);
+            }
+
+            posts = posts.OrderByDescending(p => p.CreatedDate);
+
+            // Get distinct categories for filter
+            ViewBag.Categories = await _context.BlogPosts
+                .Where(p => !string.IsNullOrEmpty(p.Category))
+                .Select(p => p.Category)
+                .Distinct()
+                .ToListAsync();
+
+            return View(await posts.ToListAsync());
+        }
+
         // GET: Blog/Details/5
         public async Task<IActionResult> Details(int? id)
         {

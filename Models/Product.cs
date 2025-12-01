@@ -9,5 +9,8 @@
         public string? ImageUrl { get; set; }
         public string? Category { get; set; }
         public int Stock { get; set; }
+
+        // Add this line
+        public List<ProductReview> Reviews { get; set; } = new List<ProductReview>();
     }
 }
