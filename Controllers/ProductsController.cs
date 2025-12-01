@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BlogEcommerce.Models;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace BlogEcommerce.Controllers
 {
@@ -25,8 +27,11 @@ namespace BlogEcommerce.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index(string searchString, string category)
+        public async Task<IActionResult> Index(string searchString, string category, int? page)
         {
+            int pageSize = 9; // Products per page
+            int pageNumber = page ?? 1;
+
             var products = from p in _context.Products
                            select p;
 
@@ -48,7 +53,14 @@ namespace BlogEcommerce.Controllers
                 .Distinct()
                 .ToListAsync();
 
-            return View(await products.ToListAsync());
+            ViewBag.CurrentSearch = searchString;
+            ViewBag.CurrentCategory = category;
+
+            // Convert to list first, then apply paging
+            var productsList = await products.ToListAsync();
+            var pagedProducts = productsList.ToPagedList(pageNumber, pageSize);
+
+            return View(pagedProducts);
         }
 
         // GET: Products/Details/5

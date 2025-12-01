@@ -1,4 +1,6 @@
-﻿@model IEnumerable<BlogEcommerce.Models.Product>
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<BlogEcommerce.Models.Product>
 
 @{
     ViewData["Title"] = "Products";
@@ -20,10 +22,8 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="input-group">
-                            <input type="text" name="searchString" class="form-control" placeholder="Search products..." value="@Context.Request.Query["searchString"]">
-                            <button type="submit" class="btn btn-primary">
-                                Search
-                            </button>
+                            <input type="text" name="searchString" class="form-control" placeholder="Search products..." value="@ViewBag.CurrentSearch">
+                            <button type="submit" class="btn btn-primary">Search</button>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -33,7 +33,7 @@
                             {
                                 @foreach (var cat in (List<string>)ViewBag.Categories)
                                 {
-                                            <option value="@cat" selected="@(Context.Request.Query["category"] == cat)">@cat</option>
+                                            <option value="@cat" selected="@(ViewBag.CurrentCategory == cat)">@cat</option>
                                 }
                             }
                         </select>
@@ -45,6 +45,9 @@
             </form>
         </div>
     </div>
+
+    <!-- Results Count -->
+    <p class="text-muted">Showing @Model.Count of @Model.TotalItemCount products</p>
 
     <div class="row">
         @foreach (var item in Model)
@@ -93,5 +96,34 @@
                 <p>Try adjusting your search or filter criteria.</p>
                 <a asp-action="Index" class="btn btn-primary">View All Products</a>
             </div>
+    }
+
+    <!-- Pagination -->
+    @if (Model.PageCount > 1)
+    {
+            <nav aria-label="Product pagination">
+                <ul class="pagination justify-content-center">
+                @if (Model.HasPreviousPage)
+                {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" asp-route-searchString="@ViewBag.CurrentSearch" asp-route-category="@ViewBag.CurrentCategory">Previous</a>
+                            </li>
+                }
+
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@ViewBag.CurrentSearch" asp-route-category="@ViewBag.CurrentCategory">@i</a>
+                            </li>
+                }
+
+                @if (Model.HasNextPage)
+                {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" asp-route-searchString="@ViewBag.CurrentSearch" asp-route-category="@ViewBag.CurrentCategory">Next</a>
+                            </li>
+                }
+                </ul>
+            </nav>
     }
 </div>
