@@ -6,75 +6,108 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Order #@Model.Id</h1>
-        <a asp-action="Orders" class="btn btn-secondary">Back to Orders</a>
+        <h1>Order #@Model.Id Details</h1>
+        <a asp-action="Orders" class="btn btn-secondary">← Back to Orders</a>
     </div>
 
+    @if (TempData["SuccessMessage"] != null)
+    {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    }
+
     <div class="row">
+        <!-- Order Items -->
         <div class="col-md-8">
-            <!-- Order Items -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5>Order Items</h5>
+                    <h5 class="mb-0">Order Items</h5>
                 </div>
                 <div class="card-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.OrderItems)
-                            {
-                                    <tr>
-                                        <td>@item.Product?.Name</td>
-                                        <td>$@item.Price.ToString("N2")</td>
-                                        <td>@item.Quantity</td>
-                                        <td>$@((item.Price * item.Quantity).ToString("N2"))</td>
-                                    </tr>
-                            }
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                <td><strong>$@Model.TotalAmount.ToString("N2")</strong></td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                        <tr>
+                                            <td>
+                                                <strong>@item.Product?.Name</strong>
+                                            @if (!string.IsNullOrEmpty(item.Product?.Category))
+                                            {
+                                                        <br />
+
+                                                <small class="text-muted">@item.Product.Category</small>
+                                            }
+                                            </td>
+                                            <td>$@item.Price.ToString("N2")</td>
+                                            <td>@item.Quantity</td>
+                                            <td><strong>$@((item.Price * item.Quantity).ToString("N2"))</strong></td>
+                                        </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total Amount:</strong></td>
+                                    <td><strong class="text-primary fs-5">$@Model.TotalAmount.ToString("N2")</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- Order Information Sidebar -->
         <div class="col-md-4">
             <!-- Customer Information -->
             <div class="card mb-4">
-                <div class="card-header">
-                    <h5>Customer Information</h5>
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Customer Information</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Name:</strong> @Model.CustomerName</p>
-                    <p><strong>Email:</strong> @Model.Email</p>
-                    <p><strong>Phone:</strong> @Model.Phone</p>
-                    <p><strong>Address:</strong><br />
-                        @Model.Address<br />
-                        @Model.City, @Model.ZipCode
-                    </p>
+                    <p class="mb-2"><strong>Name:</strong><br />@Model.CustomerName</p>
+                    <p class="mb-2"><strong>Email:</strong><br />@Model.Email</p>
+                    <p class="mb-0"><strong>Phone:</strong><br />@Model.Phone</p>
                 </div>
             </div>
 
-            <!-- Order Status -->
-            <div class="card">
-                <div class="card-header">
-                    <h5>Order Status</h5>
+            <!-- Shipping Address -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Shipping Address</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Order Date:</strong> @Model.OrderDate.ToString("MMMM dd, yyyy")</p>
-                    <p><strong>Current Status:</strong> 
-                        <span class="badge bg-@(Model.Status == "Pending" ? "warning" : Model.Status == "Completed" ? "success" : Model.Status == "Shipped" ? "info" : "secondary")">
+                    <address class="mb-0">
+                        @Model.Address<br />
+                        @Model.City, @Model.ZipCode
+                    </address>
+                </div>
+            </div>
+
+            <!-- Order Status Management -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">Order Status</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">
+                        <strong>Order Date:</strong><br />
+                        @Model.OrderDate.ToString("MMMM dd, yyyy HH:mm")
+                    </p>
+
+                    <p class="mb-3">
+                        <strong>Current Status:</strong><br />
+                        <span class="badge bg-@(Model.Status == "Pending" ? "warning" : Model.Status == "Completed" ? "success" : Model.Status == "Shipped" ? "info" : Model.Status == "Processing" ? "primary" : "secondary") fs-6">
                             @Model.Status
                         </span>
                     </p>
@@ -84,8 +117,8 @@
                     <form asp-action="UpdateOrderStatus" method="post">
                         <input type="hidden" name="id" value="@Model.Id" />
                         <div class="mb-3">
-                            <label class="form-label">Update Status:</label>
-                            <select name="status" class="form-select">
+                            <label class="form-label"><strong>Update Status:</strong></label>
+                            <select name="status" class="form-select" required>
                                 <option value="Pending" selected="@(Model.Status == "Pending")">Pending</option>
                                 <option value="Processing" selected="@(Model.Status == "Processing")">Processing</option>
                                 <option value="Shipped" selected="@(Model.Status == "Shipped")">Shipped</option>
@@ -93,8 +126,36 @@
                                 <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Cancelled</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Update Status</button>
+                        <button type="submit" class="btn btn-primary w-100">
+                            Update Status
+                        </button>
                     </form>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">
+                        <strong>Total Items:</strong>
+                        <span class="float-end">@Model.OrderItems.Sum(i => i.Quantity)</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Subtotal:</strong>
+                        <span class="float-end">$@Model.TotalAmount.ToString("N2")</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Shipping:</strong>
+                        <span class="float-end">Free</span>
+                    </p>
+                    <hr />
+                    <p class="mb-0">
+                        <strong>Total:</strong>
+                        <strong class="float-end text-primary">$@Model.TotalAmount.ToString("N2")</strong>
+                    </p>
                 </div>
             </div>
         </div>

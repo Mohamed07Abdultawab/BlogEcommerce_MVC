@@ -3,16 +3,28 @@
 }
 
 <div class="container-fluid mt-4">
-    <h1 class="mb-4">Admin Dashboard</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Admin Dashboard</h1>
+        <div>
+            <a asp-action="Statistics" class="btn btn-info">View Detailed Statistics</a>
+        </div>
+    </div>
 
     <!-- Statistics Cards -->
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card text-white bg-primary mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Total Products</h5>
-                    <h2>@ViewBag.TotalProducts</h2>
-                    <a asp-controller="Products" asp-action="Index" class="text-white">View All →</a>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-uppercase mb-0">Total Products</h6>
+                            <h2 class="mb-0">@ViewBag.TotalProducts</h2>
+                        </div>
+                        <div class="fs-1">📦</div>
+                    </div>
+                    <a asp-controller="Products" asp-action="Index" class="text-white text-decoration-none">
+                        <small>View All →</small>
+                    </a>
                 </div>
             </div>
         </div>
@@ -20,9 +32,16 @@
         <div class="col-md-3">
             <div class="card text-white bg-success mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Total Blog Posts</h5>
-                    <h2>@ViewBag.TotalBlogPosts</h2>
-                    <a asp-controller="Blog" asp-action="Index" class="text-white">View All →</a>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-uppercase mb-0">Blog Posts</h6>
+                            <h2 class="mb-0">@ViewBag.TotalBlogPosts</h2>
+                        </div>
+                        <div class="fs-1">📝</div>
+                    </div>
+                    <a asp-controller="Blog" asp-action="Index" class="text-white text-decoration-none">
+                        <small>View All →</small>
+                    </a>
                 </div>
             </div>
         </div>
@@ -30,9 +49,16 @@
         <div class="col-md-3">
             <div class="card text-white bg-warning mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Total Orders</h5>
-                    <h2>@ViewBag.TotalOrders</h2>
-                    <a asp-action="Orders" class="text-white">View All →</a>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-uppercase mb-0">Total Orders</h6>
+                            <h2 class="mb-0">@ViewBag.TotalOrders</h2>
+                        </div>
+                        <div class="fs-1">🛒</div>
+                    </div>
+                    <a asp-action="Orders" class="text-white text-decoration-none">
+                        <small>View All →</small>
+                    </a>
                 </div>
             </div>
         </div>
@@ -40,8 +66,14 @@
         <div class="col-md-3">
             <div class="card text-white bg-info mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Total Revenue</h5>
-                    <h2>$@ViewBag.TotalRevenue.ToString("N2")</h2>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-uppercase mb-0">Total Revenue</h6>
+                            <h2 class="mb-0">$@ViewBag.TotalRevenue.ToString("N2")</h2>
+                        </div>
+                        <div class="fs-1">💰</div>
+                    </div>
+                    <small class="text-white">All completed orders</small>
                 </div>
             </div>
         </div>
@@ -50,87 +82,173 @@
     <!-- Pending Orders Alert -->
     @if (ViewBag.PendingOrders > 0)
     {
-            <div class="alert alert-warning" role="alert">
-                <strong>Attention!</strong> You have @ViewBag.PendingOrders pending order(s) to process.
-                <a asp-action="Orders" class="alert-link">View Orders</a>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>⚠️ Attention!</strong> You have <strong>@ViewBag.PendingOrders</strong> pending order(s) to process.
+                <a asp-action="Orders" asp-route-status="Pending" class="alert-link">View Pending Orders</a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
     }
 
-    <!-- Recent Orders -->
-    <div class="card">
-        <div class="card-header">
-            <h5>Recent Orders</h5>
-        </div>
-        <div class="card-body">
-            @if (ViewBag.RecentOrders != null && ((List<BlogEcommerce.Models.Order>)ViewBag.RecentOrders).Any())
-            {
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Order #</th>
-                                <th>Customer</th>
-                                <th>Date</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var order in (List<BlogEcommerce.Models.Order>)ViewBag.RecentOrders)
-                        {
-                                    <tr>
-                                        <td>#@order.Id</td>
-                                        <td>@order.CustomerName</td>
-                                        <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
-                                        <td>$@order.TotalAmount.ToString("N2")</td>
-                                        <td>
-                                            <span class="badge bg-@(order.Status == "Pending" ? "warning" : order.Status == "Completed" ? "success" : "secondary")">
-                                        @order.Status
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-primary">View</a>
-                                        </td>
-                                    </tr>
-                        }
-                        </tbody>
-                    </table>
-            }
-            else
-            {
-                    <p class="text-muted">No recent orders.</p>
-            }
-        </div>
-    </div>
+    <div class="row">
+        <!-- Recent Orders -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Orders</h5>
+                    <a asp-action="Orders" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.RecentOrders != null && ((List<BlogEcommerce.Models.Order>)ViewBag.RecentOrders).Any())
+                    {
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Order #</th>
+                                            <th>Customer</th>
+                                            <th>Date</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var order in (List<BlogEcommerce.Models.Order>)ViewBag.RecentOrders)
+                                    {
+                                                <tr>
+                                                    <td><strong>#@order.Id</strong></td>
+                                                    <td>@order.CustomerName</td>
+                                                    <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                                                    <td>$@order.TotalAmount.ToString("N2")</td>
+                                                    <td>
+                                                        <span class="badge bg-@(order.Status == "Pending" ? "warning" : order.Status == "Completed" ? "success" : order.Status == "Shipped" ? "info" : order.Status == "Processing" ? "primary" : "secondary")">
+                                                    @order.Status
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">View</a>
+                                                    </td>
+                                                </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                    }
+                    else
+                    {
+                            <p class="text-muted text-center py-3">No orders yet.</p>
+                    }
+                </div>
+            </div>
 
-    <!-- Quick Actions -->
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Manage Products</h5>
-                    <p class="card-text">Add, edit, or remove products from your store.</p>
-                    <a asp-controller="Products" asp-action="Create" class="btn btn-primary">Add New Product</a>
+            <!-- Low Stock Products -->
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">⚠️ Low Stock Alert</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.LowStockProducts != null && ((List<BlogEcommerce.Models.Product>)ViewBag.LowStockProducts).Any())
+                    {
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Category</th>
+                                            <th>Stock</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var product in (List<BlogEcommerce.Models.Product>)ViewBag.LowStockProducts)
+                                    {
+                                                <tr>
+                                                    <td>@product.Name</td>
+                                                    <td>@product.Category</td>
+                                                    <td>
+                                                        <span class="badge bg-danger">@product.Stock left</span>
+                                                    </td>
+                                                    <td>
+                                                        <a asp-controller="Products" asp-action="Edit" asp-route-id="@product.Id" class="btn btn-sm btn-warning">Update Stock</a>
+                                                    </td>
+                                                </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                    }
+                    else
+                    {
+                            <p class="text-success text-center py-3">✓ All products have sufficient stock!</p>
+                    }
                 </div>
             </div>
         </div>
 
+        <!-- Right Sidebar -->
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Manage Blog</h5>
-                    <p class="card-text">Create and manage blog posts.</p>
-                    <a asp-controller="Blog" asp-action="Create" class="btn btn-success">Create New Post</a>
+            <!-- Quick Actions -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Products" asp-action="Create" class="btn btn-primary">
+                            <strong>+</strong> Add New Product
+                        </a>
+                        <a asp-controller="Blog" asp-action="Create" class="btn btn-success">
+                            <strong>+</strong> Create Blog Post
+                        </a>
+                        <a asp-action="Orders" asp-route-status="Pending" class="btn btn-warning">
+                            📋 View Pending Orders
+                        </a>
+                        <a asp-action="Statistics" class="btn btn-info">
+                            📊 View Statistics
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
+            <!-- Recent Blog Posts -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Blog Posts</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.RecentPosts != null && ((List<BlogEcommerce.Models.BlogPost>)ViewBag.RecentPosts).Any())
+                    {
+                            <ul class="list-group list-group-flush">
+                            @foreach (var post in (List<BlogEcommerce.Models.BlogPost>)ViewBag.RecentPosts)
+                            {
+                                        <li class="list-group-item px-0">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h6 class="mb-1">@post.Title</h6>
+                                                    <small class="text-muted">@post.CreatedDate.ToString("MMM dd, yyyy")</small>
+                                                </div>
+                                                <a asp-controller="Blog" asp-action="Edit" asp-route-id="@post.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                            </div>
+                                        </li>
+                            }
+                            </ul>
+                    }
+                    else
+                    {
+                            <p class="text-muted">No blog posts yet.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- System Info -->
             <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">View Orders</h5>
-                    <p class="card-text">Manage and process customer orders.</p>
-                    <a asp-action="Orders" class="btn btn-warning">View All Orders</a>
+                <div class="card-header">
+                    <h5 class="mb-0">System Information</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Server Time:</strong> @DateTime.Now.ToString("MMM dd, yyyy HH:mm")</p>
+                    <p class="mb-2"><strong>Database:</strong> Connected</p>
+                    <p class="mb-0"><strong>Version:</strong> 1.0.0</p>
                 </div>
             </div>
         </div>
