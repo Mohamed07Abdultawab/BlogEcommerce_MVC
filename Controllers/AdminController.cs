@@ -306,5 +306,56 @@ namespace BlogEcommerce.Controllers
             return RedirectToAction(nameof(UserCart), new { userId = userId });
         }
 
+
+        // POST: Admin/UpdateAllOrderStatuses
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateAllOrderStatuses()
+        {
+            var now = DateTime.Now;
+            int updatedCount = 0;
+
+            // Auto-update Pending to Processing after 1 hour
+            var pendingOrders = await _context.Orders
+                .Where(o => o.Status == "Pending" && o.OrderDate.AddHours(1) <= now)
+                .ToListAsync();
+
+            foreach (var order in pendingOrders)
+            {
+                order.Status = "Processing";
+                _context.Update(order);
+                updatedCount++;
+            }
+
+            // Auto-update Processing to Shipped after 2 days
+            var processingOrders = await _context.Orders
+                .Where(o => o.Status == "Processing" && o.OrderDate.AddDays(2) <= now)
+                .ToListAsync();
+
+            foreach (var order in processingOrders)
+            {
+                order.Status = "Shipped";
+                _context.Update(order);
+                updatedCount++;
+            }
+
+            // Auto-update Shipped to Completed after 5 days
+            var shippedOrders = await _context.Orders
+                .Where(o => o.Status == "Shipped" && o.OrderDate.AddDays(5) <= now)
+                .ToListAsync();
+
+            foreach (var order in shippedOrders)
+            {
+                order.Status = "Completed";
+                _context.Update(order);
+                updatedCount++;
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Updated {updatedCount} order(s) automatically.";
+            return RedirectToAction(nameof(Orders));
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 using BlogEcommerce.Models;
 using BlogEcommerce.Data;
+using BlogEcommerce.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,9 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+// Add Background Service for Order Status Updates
+builder.Services.AddHostedService<OrderStatusService>();
 
 var app = builder.Build();
 
