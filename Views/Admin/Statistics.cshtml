@@ -1,0 +1,343 @@
+﻿@{
+    ViewData["Title"] = "Statistics";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Detailed Statistics</h1>
+        <a asp-action="Dashboard" class="btn btn-secondary">← Back to Dashboard</a>
+    </div>
+
+    <!-- Orders by Status -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Orders by Status</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.OrdersByStatus != null && ((List<dynamic>)ViewBag.OrdersByStatus).Any())
+                    {
+                            <div class="row">
+                            @foreach (var item in (List<dynamic>)ViewBag.OrdersByStatus)
+                            {
+                                var status = item.Status;
+                                var count = item.Count;
+                                var bgColor = status == "Pending" ? "warning" :
+                                             status == "Completed" ? "success" :
+                                             status == "Shipped" ? "info" :
+                                             status == "Processing" ? "primary" : "secondary";
+
+                                        <div class="col-md-2 col-sm-4 mb-3">
+                                            <div class="card text-white bg-@bgColor">
+                                                <div class="card-body text-center">
+                                                    <h3 class="mb-0">@count</h3>
+                                                    <p class="mb-0"><small>@status</small></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                            }
+                            </div>
+
+                            <canvas id="orderStatusChart" height="80"></canvas>
+                    }
+                    else
+                    {
+                            <p class="text-muted text-center">No order data available.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue by Month -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Revenue Trend (Last 6 Months)</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.RevenueByMonth != null && ((List<dynamic>)ViewBag.RevenueByMonth).Any())
+                    {
+                            <div class="table-responsive mb-4">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Month</th>
+                                            <th>Orders</th>
+                                            <th>Revenue</th>
+                                            <th>Avg Order Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var item in (List<dynamic>)ViewBag.RevenueByMonth)
+                                    {
+                                        var monthName = new DateTime(item.Year, item.Month, 1).ToString("MMMM yyyy");
+                                        var avgOrder = item.OrderCount > 0 ? item.Revenue / item.OrderCount : 0;
+
+                                                <tr>
+                                                    <td><strong>@monthName</strong></td>
+                                                    <td>@item.OrderCount</td>
+                                                    <td class="text-success"><strong>$@item.Revenue.ToString("N2")</strong></td>
+                                                    <td>$@avgOrder.ToString("N2")</td>
+                                                </tr>
+                                    }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="table-primary">
+                                            <td><strong>Total</strong></td>
+                                            <td><strong>@((List<dynamic>)ViewBag.RevenueByMonth).Sum(x => x.OrderCount)</strong></td>
+                                            <td><strong>$@((List<dynamic>)ViewBag.RevenueByMonth).Sum(x => x.Revenue).ToString("N2")</strong></td>
+                                            <td>-</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <canvas id="revenueChart" height="80"></canvas>
+                    }
+                    else
+                    {
+                            <p class="text-muted text-center">No revenue data available for the last 6 months.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Selling Products -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Top 10 Best Selling Products</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.TopProducts != null && ((List<dynamic>)ViewBag.TopProducts).Any())
+                    {
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Product Name</th>
+                                            <th>Units Sold</th>
+                                            <th>Total Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @{
+                                        int rank = 1;
+                                    }
+                                    @foreach (var product in (List<dynamic>)ViewBag.TopProducts)
+                                    {
+                                                <tr>
+                                                    <td>
+                                                @if (rank == 1)
+                                                {
+                                                                <span class="badge bg-warning">🥇 @rank</span>
+                                                }
+                                                else if (rank == 2)
+                                                {
+                                                                <span class="badge bg-secondary">🥈 @rank</span>
+                                                }
+                                                else if (rank == 3)
+                                                {
+                                                                <span class="badge bg-danger">🥉 @rank</span>
+                                                }
+                                                else
+                                                {
+                                                                <span class="badge bg-light text-dark">@rank</span>
+                                                }
+                                                    </td>
+                                                    <td><strong>@product.ProductName</strong></td>
+                                                    <td>
+                                                        <span class="badge bg-primary">@product.TotalQuantity units</span>
+                                                    </td>
+                                                    <td class="text-success"><strong>$@product.TotalRevenue.ToString("N2")</strong></td>
+                                                </tr>
+                                        rank++;
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <canvas id="topProductsChart" height="100"></canvas>
+                    }
+                    else
+                    {
+                            <p class="text-muted text-center">No sales data available yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // Orders by Status Chart
+        @if (ViewBag.OrdersByStatus != null && ((List<dynamic>)ViewBag.OrdersByStatus).Any())
+        {
+            <text>
+                    const orderStatusData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.OrdersByStatus));
+                    const statusLabels = orderStatusData.map(item => item.Status);
+                    const statusCounts = orderStatusData.map(item => item.Count);
+                    const statusColors = statusLabels.map(status => {
+                        switch(status) {
+                            case 'Pending': return '#ffc107';
+                            case 'Processing': return '#0d6efd';
+                            case 'Shipped': return '#0dcaf0';
+                            case 'Completed': return '#198754';
+                            case 'Cancelled': return '#6c757d';
+                            default: return '#6c757d';
+                        }
+                    });
+
+                    new Chart(document.getElementById('orderStatusChart'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: statusLabels,
+                            datasets: [{
+                                data: statusCounts,
+                                backgroundColor: statusColors
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Order Distribution by Status'
+                                }
+                            }
+                        }
+                    });
+            </text>
+        }
+
+            // Revenue by Month Chart
+        @if (ViewBag.RevenueByMonth != null && ((List<dynamic>)ViewBag.RevenueByMonth).Any())
+        {
+            <text>
+                    const revenueData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.RevenueByMonth));
+                    const monthLabels = revenueData.map(item => {
+                        const date = new Date(item.Year, item.Month - 1);
+                        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                    });
+                    const revenueValues = revenueData.map(item => item.Revenue);
+                    const orderCounts = revenueData.map(item => item.OrderCount);
+
+                    new Chart(document.getElementById('revenueChart'), {
+                        type: 'line',
+                        data: {
+                            labels: monthLabels,
+                            datasets: [{
+                                label: 'Revenue ($)',
+                                data: revenueValues,
+                                borderColor: '#198754',
+                                backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }, {
+                                label: 'Orders',
+                                data: orderCounts,
+                                borderColor: '#0d6efd',
+                                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                yAxisID: 'y1'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Monthly Revenue and Order Trends'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    type: 'linear',
+                                    display: true,
+                                    position: 'left',
+                                    title: {
+                                        display: true,
+                                        text: 'Revenue ($)'
+                                    }
+                                },
+                                y1: {
+                                    type: 'linear',
+                                    display: true,
+                                    position: 'right',
+                                    title: {
+                                        display: true,
+                                        text: 'Orders'
+                                    },
+                                    grid: {
+                                        drawOnChartArea: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+            </text>
+        }
+
+            // Top Products Chart
+        @if (ViewBag.TopProducts != null && ((List<dynamic>)ViewBag.TopProducts).Any())
+        {
+            <text>
+                    const topProducts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.TopProducts));
+                    const productNames = topProducts.map(item => item.ProductName.length > 20 ? item.ProductName.substring(0, 20) + '...' : item.ProductName);
+                    const productQuantities = topProducts.map(item => item.TotalQuantity);
+
+                    new Chart(document.getElementById('topProductsChart'), {
+                        type: 'bar',
+                        data: {
+                            labels: productNames,
+                            datasets: [{
+                                label: 'Units Sold',
+                                data: productQuantities,
+                                backgroundColor: 'rgba(13, 110, 253, 0.7)',
+                                borderColor: '#0d6efd',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            indexAxis: 'y',
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Top Selling Products by Units'
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Units Sold'
+                                    }
+                                }
+                            }
+                        }
+                    });
+            </text>
+        }
+        </script>
+}
