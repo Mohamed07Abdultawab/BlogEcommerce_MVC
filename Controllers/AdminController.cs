@@ -180,5 +180,131 @@ namespace BlogEcommerce.Controllers
 
             return View();
         }
+
+
+        // GET: Admin/AllCarts
+        public async Task<IActionResult> AllCarts()
+        {
+            var allCarts = await _context.CartItems
+                .Include(c => c.Product)
+                .GroupBy(c => c.UserId)
+                .Select(g => new
+                {
+                    UserId = g.Key,
+                    Items = g.ToList(),
+                    TotalItems = g.Sum(c => c.Quantity),
+                    TotalValue = g.Sum(c => c.Quantity * c.Product!.Price)
+                })
+                .ToListAsync();
+
+            // Get user emails for each cart
+            var cartViewModels = new List<dynamic>();
+            foreach (var cart in allCarts)
+            {
+                var user = await _context.Users.FindAsync(cart.UserId);
+                cartViewModels.Add(new
+                {
+                    UserId = cart.UserId,
+                    UserEmail = user?.Email ?? "Unknown User",
+                    Items = cart.Items,
+                    TotalItems = cart.TotalItems,
+                    TotalValue = cart.TotalValue
+                });
+            }
+
+            ViewBag.Carts = cartViewModels;
+            return View();
+        }
+
+        // GET: Admin/UserCart/userId
+        public async Task<IActionResult> UserCart(string userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var cartItems = await _context.CartItems
+                .Include(c => c.Product)
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            ViewBag.UserEmail = user.Email;
+            ViewBag.UserId = userId;
+
+            return View(cartItems);
+        }
+
+        // POST: Admin/DeleteCartItem
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCartItem(int id, string userId)
+        {
+            var cartItem = await _context.CartItems.FindAsync(id);
+
+            if (cartItem == null)
+            {
+                return NotFound();
+            }
+
+            _context.CartItems.Remove(cartItem);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Cart item deleted successfully!";
+            return RedirectToAction(nameof(UserCart), new { userId = userId });
+        }
+
+        // POST: Admin/ClearUserCart
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ClearUserCart(string userId)
+        {
+            var cartItems = await _context.CartItems
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            _context.CartItems.RemoveRange(cartItems);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "User cart cleared successfully!";
+            return RedirectToAction(nameof(AllCarts));
+        }
+
+        // POST: Admin/UpdateCartItemQuantity
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateCartItemQuantity(int id, int quantity, string userId)
+        {
+            var cartItem = await _context.CartItems
+                .Include(c => c.Product)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (cartItem == null)
+            {
+                return NotFound();
+            }
+
+            if (quantity <= 0)
+            {
+                _context.CartItems.Remove(cartItem);
+                TempData["SuccessMessage"] = "Item removed from cart.";
+            }
+            else if (quantity > cartItem.Product!.Stock)
+            {
+                TempData["ErrorMessage"] = $"Only {cartItem.Product.Stock} items available in stock.";
+                return RedirectToAction(nameof(UserCart), new { userId = userId });
+            }
+            else
+            {
+                cartItem.Quantity = quantity;
+                _context.Update(cartItem);
+                TempData["SuccessMessage"] = "Quantity updated successfully!";
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(UserCart), new { userId = userId });
+        }
+
     }
 }

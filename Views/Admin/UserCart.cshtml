@@ -1,0 +1,175 @@
+﻿@model IEnumerable<BlogEcommerce.Models.CartItem>
+
+@{
+    ViewData["Title"] = "User Cart Details";
+    decimal total = 0;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Cart for @ViewBag.UserEmail</h1>
+        <a asp-action="AllCarts" class="btn btn-secondary">← Back to All Carts</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    }
+
+    @if (Model.Any())
+    {
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Cart Items</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Subtotal</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        var subtotal = item.Product!.Price * item.Quantity;
+                                        total += subtotal;
+
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                    @if (!string.IsNullOrEmpty(item.Product.ImageUrl))
+                                                    {
+                                                                    <img src="@item.Product.ImageUrl" alt="@item.Product.Name" style="width: 60px; height: 60px; object-fit: cover;" class="me-3 rounded">
+                                                    }
+                                                            <div>
+                                                                <h6 class="mb-0">@item.Product.Name</h6>
+                                                                <small class="text-muted">@item.Product.Category</small>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle">$@item.Product.Price.ToString("N2")</td>
+                                                    <td class="align-middle">
+                                                        <form asp-action="UpdateCartItemQuantity" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@item.Id" />
+                                                            <input type="hidden" name="userId" value="@ViewBag.UserId" />
+                                                            <div class="input-group" style="width: 150px;">
+                                                                <button type="submit" name="quantity" value="@(item.Quantity - 1)" class="btn btn-sm btn-outline-secondary">-</button>
+                                                                <input type="number" class="form-control form-control-sm text-center" value="@item.Quantity" readonly>
+                                                                <button type="submit" name="quantity" value="@(item.Quantity + 1)" class="btn btn-sm btn-outline-secondary">+</button>
+                                                            </div>
+                                                        </form>
+                                                    </td>
+                                                    <td class="align-middle"><strong>$@subtotal.ToString("N2")</strong></td>
+                                                    <td class="align-middle">
+                                                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteItem(@item.Id, '@ViewBag.UserId', '@item.Product.Name')">
+                                                            Delete
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Cart Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Items:</span>
+                                <strong>@Model.Sum(i => i.Quantity)</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span>$@total.ToString("N2")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping:</span>
+                                <span>Free</span>
+                            </div>
+                            <hr />
+                            <div class="d-flex justify-content-between mb-3">
+                                <strong>Total:</strong>
+                                <strong class="text-primary fs-4">$@total.ToString("N2")</strong>
+                            </div>
+
+                            <button type="button" class="btn btn-danger w-100" onclick="clearUserCart('@ViewBag.UserId', '@ViewBag.UserEmail')">
+                                Clear Entire Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">Admin Actions</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small">As an admin, you can manage this user's cart by updating quantities or removing items.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    }
+    else
+    {
+            <div class="alert alert-info text-center">
+                <h4>Cart is Empty</h4>
+                <p>This user doesn't have any items in their cart.</p>
+                <a asp-action="AllCarts" class="btn btn-primary">View Other Carts</a>
+            </div>
+    }
+</div>
+
+<!-- Delete Item Form -->
+<form id="deleteItemForm" asp-action="DeleteCartItem" method="post" style="display: none;">
+    <input type="hidden" name="id" id="deleteItemId" />
+    <input type="hidden" name="userId" id="deleteItemUserId" />
+</form>
+
+<!-- Clear Cart Form -->
+<form id="clearCartForm" asp-action="ClearUserCart" method="post" style="display: none;">
+    <input type="hidden" name="userId" id="clearCartUserId" />
+</form>
+
+@section Scripts {
+        <script>
+            function deleteItem(itemId, userId, productName) {
+                if (confirm(`Are you sure you want to remove "${productName}" from this cart?`)) {
+                    document.getElementById('deleteItemId').value = itemId;
+                    document.getElementById('deleteItemUserId').value = userId;
+                    document.getElementById('deleteItemForm').submit();
+                }
+            }
+
+            function clearUserCart(userId, userEmail) {
+                if (confirm(`Are you sure you want to clear ALL items from ${userEmail}'s cart?`)) {
+                    document.getElementById('clearCartUserId').value = userId;
+                    document.getElementById('clearCartForm').submit();
+                }
+            }
+        </script>
+}

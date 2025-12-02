@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "All User Carts";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>All User Shopping Carts</h1>
+        <a asp-action="Dashboard" class="btn btn-secondary">← Back to Dashboard</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    }
+
+    @if (ViewBag.Carts != null && ((List<dynamic>)ViewBag.Carts).Any())
+    {
+            <div class="row">
+            @foreach (var cart in (List<dynamic>)ViewBag.Carts)
+            {
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">🛒 @cart.UserEmail</h5>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <p class="mb-2">
+                                            <strong>Total Items:</strong> 
+                                            <span class="badge bg-info">@cart.TotalItems</span>
+                                        </p>
+                                        <p class="mb-2">
+                                            <strong>Total Value:</strong> 
+                                            <span class="text-success fs-5">$@cart.TotalValue.ToString("N2")</span>
+                                        </p>
+                                    </div>
+
+                                    <div class="list-group mb-3">
+                                @foreach (var item in (List<BlogEcommerce.Models.CartItem>)cart.Items)
+                                {
+                                                <div class="list-group-item">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <h6 class="mb-1">@item.Product?.Name</h6>
+                                                            <small class="text-muted">Qty: @item.Quantity × $@item.Product?.Price.ToString("N2")</small>
+                                                        </div>
+                                                        <strong class="text-primary">$@((item.Quantity * item.Product!.Price).ToString("N2"))</strong>
+                                                    </div>
+                                                </div>
+                                }
+                                    </div>
+
+                                    <div class="d-grid gap-2">
+                                        <a asp-action="UserCart" asp-route-userId="@cart.UserId" class="btn btn-primary">
+                                            View Full Cart
+                                        </a>
+                                        <button type="button" class="btn btn-danger" onclick="clearCart('@cart.UserId', '@cart.UserEmail')">
+                                            Clear Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            }
+            </div>
+    }
+    else
+    {
+            <div class="alert alert-info text-center">
+                <h4>No Active Carts</h4>
+                <p>There are currently no items in any user's cart.</p>
+            </div>
+    }
+</div>
+
+<!-- Clear Cart Confirmation Modal -->
+<form id="clearCartForm" asp-action="ClearUserCart" method="post" style="display: none;">
+    <input type="hidden" name="userId" id="clearCartUserId" />
+</form>
+
+@section Scripts {
+        <script>
+            function clearCart(userId, userEmail) {
+                if (confirm(`Are you sure you want to clear all items from ${userEmail}'s cart?`)) {
+                    document.getElementById('clearCartUserId').value = userId;
+                    document.getElementById('clearCartForm').submit();
+                }
+            }
+        </script>
+}
