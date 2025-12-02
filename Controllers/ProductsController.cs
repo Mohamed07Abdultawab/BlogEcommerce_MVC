@@ -115,6 +115,60 @@ namespace BlogEcommerce.Controllers
             return RedirectToAction(nameof(Details), new { id = productId });
         }
 
+
+        // POST: Products/EditReview
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditReview(int id, int rating, string comment)
+        {
+            var review = await _context.ProductReviews.FindAsync(id);
+
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            // Check if user is admin or review owner
+            if (!User.IsInRole("Admin") && review.UserName != User.Identity?.Name)
+            {
+                return Forbid();
+            }
+
+            review.Rating = rating;
+            review.Comment = comment;
+            _context.Update(review);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Review updated successfully!";
+            return RedirectToAction(nameof(Details), new { id = review.ProductId });
+        }
+
+        // POST: Products/DeleteReview
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteReview(int id, int productId)
+        {
+            var review = await _context.ProductReviews.FindAsync(id);
+
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            // Check if user is admin or review owner
+            if (!User.IsInRole("Admin") && review.UserName != User.Identity?.Name)
+            {
+                return Forbid();
+            }
+
+            _context.ProductReviews.Remove(review);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Review deleted successfully!";
+            return RedirectToAction(nameof(Details), new { id = productId });
+        }
+
+
         // GET: Products/Create
         public IActionResult Create()
         {
@@ -220,6 +274,8 @@ namespace BlogEcommerce.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+
 
         private bool ProductExists(int id)
         {

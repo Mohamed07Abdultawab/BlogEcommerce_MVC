@@ -248,6 +248,58 @@ namespace BlogEcommerce.Controllers
             return RedirectToAction(nameof(Details), new { id = blogPostId });
         }
 
+
+        // POST: Blog/EditComment
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditComment(int id, string comment)
+        {
+            var blogComment = await _context.BlogComments.FindAsync(id);
+
+            if (blogComment == null)
+            {
+                return NotFound();
+            }
+
+            // Check if user is admin or comment owner
+            if (!User.IsInRole("Admin") && blogComment.UserName != User.Identity?.Name)
+            {
+                return Forbid();
+            }
+
+            blogComment.Comment = comment;
+            _context.Update(blogComment);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Comment updated successfully!";
+            return RedirectToAction(nameof(Details), new { id = blogComment.BlogPostId });
+        }
+
+        // POST: Blog/DeleteComment
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteComment(int id, int blogPostId)
+        {
+            var blogComment = await _context.BlogComments.FindAsync(id);
+
+            if (blogComment == null)
+            {
+                return NotFound();
+            }
+
+            // Check if user is admin or comment owner
+            if (!User.IsInRole("Admin") && blogComment.UserName != User.Identity?.Name)
+            {
+                return Forbid();
+            }
+
+            _context.BlogComments.Remove(blogComment);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Comment deleted successfully!";
+            return RedirectToAction(nameof(Details), new { id = blogPostId });
+        }
+
         private bool BlogPostExists(int id)
         {
             return _context.BlogPosts.Any(e => e.Id == id);
