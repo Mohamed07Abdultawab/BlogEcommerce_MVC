@@ -37,6 +37,15 @@
                     <span asp-validation-for="ImageUrl" class="text-danger"></span>
                 </div>
 
+                <!-- Add Product Selector -->
+                <div class="form-group mb-3">
+                    <label asp-for="RelatedProductId" class="control-label">Related Product (Optional)</label>
+                    <select asp-for="RelatedProductId" class="form-select" asp-items="ViewBag.Products">
+                        <option value="">-- Select a product (optional) --</option>
+                    </select>
+                    <small class="form-text text-muted">Link this blog post to a product to show "View Product" button</small>
+                </div>
+
                 <div class="form-group mb-3">
                     <label asp-for="Content" class="control-label"></label>
                     <textarea asp-for="Content" class="form-control" rows="10"></textarea>

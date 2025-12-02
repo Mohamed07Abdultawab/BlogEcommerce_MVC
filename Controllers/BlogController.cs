@@ -1,5 +1,6 @@
 ﻿using BlogEcommerce.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 using X.PagedList.Extensions;
@@ -18,7 +19,7 @@ namespace BlogEcommerce.Controllers
         // GET: Blog
         public async Task<IActionResult> Index(string searchString, string category, int? page)
         {
-            int pageSize = 6; // Posts per page
+            int pageSize = 6;
             int pageNumber = page ?? 1;
 
             var posts = from p in _context.BlogPosts
@@ -27,8 +28,8 @@ namespace BlogEcommerce.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 posts = posts.Where(p => p.Title.Contains(searchString)
-                                        || p.Content.Contains(searchString)
-                                        || p.Author.Contains(searchString));
+                                    || p.Content.Contains(searchString)
+                                    || p.Author.Contains(searchString));
             }
 
             if (!String.IsNullOrEmpty(category))
@@ -38,7 +39,6 @@ namespace BlogEcommerce.Controllers
 
             posts = posts.OrderByDescending(p => p.CreatedDate);
 
-            // Get distinct categories for filter
             ViewBag.Categories = await _context.BlogPosts
                 .Where(p => !string.IsNullOrEmpty(p.Category))
                 .Select(p => p.Category)
@@ -48,10 +48,8 @@ namespace BlogEcommerce.Controllers
             ViewBag.CurrentSearch = searchString;
             ViewBag.CurrentCategory = category;
 
-            var postsList = await posts.ToListAsync();
-            var pagedPosts = postsList.ToPagedList(pageNumber, pageSize);
-
-            return View(pagedPosts);
+            var pagedPosts = await posts.ToListAsync();
+            return View(pagedPosts.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Blog/Details/5
@@ -64,6 +62,7 @@ namespace BlogEcommerce.Controllers
 
             var blogPost = await _context.BlogPosts
                 .Include(b => b.Comments)
+                .Include(b => b.RelatedProduct) // Include related product
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (blogPost == null)
@@ -74,34 +73,20 @@ namespace BlogEcommerce.Controllers
             return View(blogPost);
         }
 
-        // POST: Blog/AddComment
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddComment(int blogPostId, string comment)
-        {
-            if (User.Identity?.IsAuthenticated != true)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            var blogComment = new BlogComment
-            {
-                BlogPostId = blogPostId,
-                UserName = User.Identity.Name ?? "Anonymous",
-                Comment = comment,
-                CommentDate = DateTime.Now
-            };
-
-            _context.BlogComments.Add(blogComment);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Details), new { id = blogPostId });
-        }
-
-
         // GET: Blog/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            // Load products for dropdown
+            var products = await _context.Products
+                .OrderBy(p => p.Name)
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name
+                })
+                .ToListAsync();
+
+            ViewBag.Products = products;
             return View();
         }
 
@@ -117,6 +102,18 @@ namespace BlogEcommerce.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            // Reload products if validation fails
+            var products = await _context.Products
+                .OrderBy(p => p.Name)
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name
+                })
+                .ToListAsync();
+            ViewBag.Products = products;
+
             return View(blogPost);
         }
 
@@ -133,6 +130,18 @@ namespace BlogEcommerce.Controllers
             {
                 return NotFound();
             }
+
+            // Load products for dropdown
+            var products = await _context.Products
+                .OrderBy(p => p.Name)
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name
+                })
+                .ToListAsync();
+            ViewBag.Products = products;
+
             return View(blogPost);
         }
 
@@ -166,6 +175,18 @@ namespace BlogEcommerce.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            // Reload products if validation fails
+            var products = await _context.Products
+                .OrderBy(p => p.Name)
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name
+                })
+                .ToListAsync();
+            ViewBag.Products = products;
+
             return View(blogPost);
         }
 
@@ -177,7 +198,9 @@ namespace BlogEcommerce.Controllers
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPosts.FirstOrDefaultAsync(m => m.Id == id);
+            var blogPost = await _context.BlogPosts
+                .Include(b => b.RelatedProduct)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (blogPost == null)
             {
                 return NotFound();
@@ -199,6 +222,30 @@ namespace BlogEcommerce.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Blog/AddComment
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddComment(int blogPostId, string comment)
+        {
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var blogComment = new BlogComment
+            {
+                BlogPostId = blogPostId,
+                UserName = User.Identity.Name ?? "Anonymous",
+                Comment = comment,
+                CommentDate = DateTime.Now
+            };
+
+            _context.BlogComments.Add(blogComment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { id = blogPostId });
         }
 
         private bool BlogPostExists(int id)
