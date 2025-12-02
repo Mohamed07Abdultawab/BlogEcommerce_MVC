@@ -1,9 +1,12 @@
 ﻿using BlogEcommerce.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BlogEcommerce.Controllers
 {
+    [Authorize] // Require authentication for all cart actions
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -13,24 +16,19 @@ namespace BlogEcommerce.Controllers
             _context = context;
         }
 
-        private string GetCartId()
+        private string GetUserId()
         {
-            var cartId = HttpContext.Session.GetString("CartId");
-            if (string.IsNullOrEmpty(cartId))
-            {
-                cartId = Guid.NewGuid().ToString();
-                HttpContext.Session.SetString("CartId", cartId);
-            }
-            return cartId;
+            return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
         }
 
         // GET: Cart
         public async Task<IActionResult> Index()
         {
-            var cartId = GetCartId();
+            var userId = GetUserId();
+
             var cartItems = await _context.CartItems
                 .Include(c => c.Product)
-                .Where(c => c.CartId == cartId)
+                .Where(c => c.UserId == userId)
                 .ToListAsync();
 
             return View(cartItems);
@@ -38,43 +36,62 @@ namespace BlogEcommerce.Controllers
 
         // POST: Cart/AddToCart
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
+            var userId = GetUserId();
+
             var product = await _context.Products.FindAsync(productId);
             if (product == null || product.Stock < quantity)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Product is out of stock or invalid quantity.";
+                return RedirectToAction("Details", "Products", new { id = productId });
             }
 
-            var cartId = GetCartId();
             var cartItem = await _context.CartItems
-                .FirstOrDefaultAsync(c => c.CartId == cartId && c.ProductId == productId);
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == productId);
 
             if (cartItem == null)
             {
+                // Create new cart item
                 cartItem = new CartItem
                 {
                     ProductId = productId,
                     Quantity = quantity,
-                    CartId = cartId
+                    UserId = userId
                 };
                 _context.CartItems.Add(cartItem);
             }
             else
             {
+                // Update existing cart item
+                if (cartItem.Quantity + quantity > product.Stock)
+                {
+                    TempData["ErrorMessage"] = $"Cannot add more items. Only {product.Stock} available in stock.";
+                    return RedirectToAction("Details", "Products", new { id = productId });
+                }
+
                 cartItem.Quantity += quantity;
                 _context.Update(cartItem);
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = $"{product.Name} added to cart successfully!";
+
             return RedirectToAction(nameof(Index));
         }
 
         // POST: Cart/UpdateQuantity
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateQuantity(int id, int quantity)
         {
-            var cartItem = await _context.CartItems.FindAsync(id);
+            var userId = GetUserId();
+
+            var cartItem = await _context.CartItems
+                .Include(c => c.Product)
+                .FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId);
+
             if (cartItem == null)
             {
                 return NotFound();
@@ -83,6 +100,11 @@ namespace BlogEcommerce.Controllers
             if (quantity <= 0)
             {
                 _context.CartItems.Remove(cartItem);
+            }
+            else if (quantity > cartItem.Product!.Stock)
+            {
+                TempData["ErrorMessage"] = $"Only {cartItem.Product.Stock} items available in stock.";
+                return RedirectToAction(nameof(Index));
             }
             else
             {
@@ -96,13 +118,19 @@ namespace BlogEcommerce.Controllers
 
         // POST: Cart/Remove
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Remove(int id)
         {
-            var cartItem = await _context.CartItems.FindAsync(id);
+            var userId = GetUserId();
+
+            var cartItem = await _context.CartItems
+                .FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId);
+
             if (cartItem != null)
             {
                 _context.CartItems.Remove(cartItem);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Item removed from cart.";
             }
 
             return RedirectToAction(nameof(Index));
@@ -111,18 +139,36 @@ namespace BlogEcommerce.Controllers
         // GET: Cart/Checkout
         public async Task<IActionResult> Checkout()
         {
-            var cartId = GetCartId();
+            var userId = GetUserId();
+
             var cartItems = await _context.CartItems
                 .Include(c => c.Product)
-                .Where(c => c.CartId == cartId)
+                .Where(c => c.UserId == userId)
                 .ToListAsync();
 
             if (!cartItems.Any())
             {
+                TempData["ErrorMessage"] = "Your cart is empty.";
                 return RedirectToAction(nameof(Index));
             }
 
-            return View();
+            // Check stock availability
+            foreach (var item in cartItems)
+            {
+                if (item.Product!.Stock < item.Quantity)
+                {
+                    TempData["ErrorMessage"] = $"{item.Product.Name} doesn't have enough stock. Please update your cart.";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+
+            // Pre-fill customer info if user email is available
+            var order = new Order
+            {
+                Email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty
+            };
+
+            return View(order);
         }
 
         // POST: Cart/PlaceOrder
@@ -130,21 +176,34 @@ namespace BlogEcommerce.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PlaceOrder(Order order)
         {
-            var cartId = GetCartId();
+            var userId = GetUserId();
+
             var cartItems = await _context.CartItems
                 .Include(c => c.Product)
-                .Where(c => c.CartId == cartId)
+                .Where(c => c.UserId == userId)
                 .ToListAsync();
 
             if (!cartItems.Any())
             {
+                TempData["ErrorMessage"] = "Your cart is empty.";
                 return RedirectToAction(nameof(Index));
+            }
+
+            // Validate stock again before placing order
+            foreach (var item in cartItems)
+            {
+                if (item.Product!.Stock < item.Quantity)
+                {
+                    TempData["ErrorMessage"] = $"{item.Product.Name} doesn't have enough stock.";
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             order.OrderDate = DateTime.Now;
             order.Status = "Pending";
             order.TotalAmount = cartItems.Sum(c => c.Product!.Price * c.Quantity);
 
+            // Create order items
             foreach (var cartItem in cartItems)
             {
                 var orderItem = new OrderItem
@@ -155,7 +214,7 @@ namespace BlogEcommerce.Controllers
                 };
                 order.OrderItems.Add(orderItem);
 
-                // Update stock
+                // Update product stock
                 var product = await _context.Products.FindAsync(cartItem.ProductId);
                 if (product != null)
                 {
@@ -165,10 +224,11 @@ namespace BlogEcommerce.Controllers
             }
 
             _context.Orders.Add(order);
-            _context.CartItems.RemoveRange(cartItems);
-            await _context.SaveChangesAsync();
 
-            HttpContext.Session.Remove("CartId");
+            // Clear user's cart
+            _context.CartItems.RemoveRange(cartItems);
+
+            await _context.SaveChangesAsync();
 
             return RedirectToAction("OrderConfirmation", new { id = order.Id });
         }
@@ -187,6 +247,22 @@ namespace BlogEcommerce.Controllers
             }
 
             return View(order);
+        }
+
+        // GET: Cart/GetCartCount (for navbar badge)
+        public async Task<IActionResult> GetCartCount()
+        {
+            if (!User.Identity!.IsAuthenticated)
+            {
+                return Json(new { count = 0 });
+            }
+
+            var userId = GetUserId();
+            var count = await _context.CartItems
+                .Where(c => c.UserId == userId)
+                .SumAsync(c => c.Quantity);
+
+            return Json(new { count });
         }
     }
 }
