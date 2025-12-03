@@ -315,9 +315,9 @@ namespace BlogEcommerce.Controllers
             var now = DateTime.Now;
             int updatedCount = 0;
 
-            // Auto-update Pending to Processing after 1 hour
+            // Auto-update Pending to Processing after 15 Seconds
             var pendingOrders = await _context.Orders
-                .Where(o => o.Status == "Pending" && o.OrderDate.AddHours(1) <= now)
+                .Where(o => o.Status == "Pending" && o.OrderDate.AddSeconds(15) <= now)
                 .ToListAsync();
 
             foreach (var order in pendingOrders)
@@ -327,9 +327,9 @@ namespace BlogEcommerce.Controllers
                 updatedCount++;
             }
 
-            // Auto-update Processing to Shipped after 2 days
+            // Auto-update Processing to Shipped after 30 Seconds
             var processingOrders = await _context.Orders
-                .Where(o => o.Status == "Processing" && o.OrderDate.AddDays(2) <= now)
+                .Where(o => o.Status == "Processing" && o.OrderDate.AddSeconds(30) <= now)
                 .ToListAsync();
 
             foreach (var order in processingOrders)
@@ -339,9 +339,9 @@ namespace BlogEcommerce.Controllers
                 updatedCount++;
             }
 
-            // Auto-update Shipped to Completed after 5 days
+            // Auto-update Shipped to Completed after 1 Minutes
             var shippedOrders = await _context.Orders
-                .Where(o => o.Status == "Shipped" && o.OrderDate.AddDays(5) <= now)
+                .Where(o => o.Status == "Shipped" && o.OrderDate.AddMinutes(1) <= now)
                 .ToListAsync();
 
             foreach (var order in shippedOrders)
