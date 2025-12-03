@@ -1,0 +1,102 @@
+﻿@model BlogEcommerce.Models.Order
+
+@{
+    ViewData["Title"] = $"Order #{Model.Id}";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Order #@Model.Id</h1>
+        <a asp-action="Orders" class="btn btn-secondary">← Back to Orders</a>
+    </div>
+
+    <div class="row">
+        <!-- Order Items -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Order Items</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                            @if (!string.IsNullOrEmpty(item.Product?.ImageUrl))
+                                            {
+                                                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" style="width: 60px; height: 60px; object-fit: cover;" class="me-3 rounded">
+                                            }
+                                                <div>
+                                                    <strong>@item.Product?.Name</strong><br>
+                                                    <small class="text-muted">@item.Product?.Category</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>$@item.Price.ToString("N2")</td>
+                                        <td>@item.Quantity</td>
+                                        <td><strong>$@((item.Price * item.Quantity).ToString("N2"))</strong></td>
+                                    </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                <td><strong class="text-primary fs-5">$@Model.TotalAmount.ToString("N2")</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Information -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="mb-0">Order Status</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>Status:</strong></p>
+                    <span class="badge bg-@(Model.Status == "Pending" ? "warning" : Model.Status == "Completed" ? "success" : Model.Status == "Shipped" ? "info" : Model.Status == "Processing" ? "primary" : "secondary") fs-6">
+                        @Model.Status
+                    </span>
+                    <p class="mt-3"><strong>Order Date:</strong><br>@Model.OrderDate.ToString("MMMM dd, yyyy HH:mm")</p>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="mb-0">Shipping Address</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">
+                        @Model.CustomerName<br>
+                        @Model.Address<br>
+                        @Model.City, @Model.ZipCode
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Contact</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-1"><strong>Email:</strong><br>@Model.Email</p>
+                    <p class="mb-0"><strong>Phone:</strong><br>@Model.Phone</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

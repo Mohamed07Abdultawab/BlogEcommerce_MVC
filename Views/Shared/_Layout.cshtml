@@ -73,24 +73,23 @@
                                 </li>
                             }
 
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button"
-                                       data-bs-toggle="dropdown" aria-expanded="false">
-                                    @User.Identity.Name
-                                    </a>
-
-                                    <!-- استخدم dropdown-menu-end ليتم فتحها ناحية اليمين -->
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <li>
-                                            <div class="px-3 py-2">
-                                                <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
-                                                @Html.AntiForgeryToken()
-                                                    <button type="submit" class="btn btn-link text-decoration-none text-dark p-0">Logout</button>
-                                                </form>
-                                            </div>
-                                        </li>
-                                    </ul>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    @User.Identity.Name
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index">👤 My Profile</a></li>
+                                <li><a class="dropdown-item" asp-controller="Profile" asp-action="Orders">📦 My Orders</a></li>
+                                <li><a class="dropdown-item" asp-controller="Profile" asp-action="Settings">⚙️ Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                        <button type="submit" class="dropdown-item">Logout</button>
+                                    </form>
                                 </li>
+                            </ul>
+                        </li>
+
                         }
                         else
                         {

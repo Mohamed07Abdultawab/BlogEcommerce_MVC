@@ -1,0 +1,170 @@
+﻿@model BlogEcommerce.Models.ProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    }
+
+    <div class="row">
+        <!-- Profile Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+                    {
+                            <img src="@Model.ProfilePictureUrl" class="rounded-circle mb-3" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
+                    }
+                    else
+                    {
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 150px; height: 150px; font-size: 60px;">
+                            @(Model.FullName?.FirstOrDefault().ToString().ToUpper() ?? Model.Email.FirstOrDefault().ToString().ToUpper())
+                            </div>
+                    }
+
+                    <h4>@(Model.FullName ?? "User")</h4>
+                    <p class="text-muted">@Model.Email</p>
+                    <p class="text-muted"><small>Member since @Model.MemberSince.ToString("MMM yyyy")</small></p>
+
+                    <a asp-action="Edit" class="btn btn-primary w-100 mb-2">Edit Profile</a>
+                    <a asp-action="ChangePassword" class="btn btn-outline-secondary w-100">Change Password</a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">Quick Links</h6>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a asp-action="Orders" class="list-group-item list-group-item-action">
+                        📦 My Orders
+                    </a>
+                    <a asp-action="Reviews" class="list-group-item list-group-item-action">
+                        ⭐ My Reviews
+                    </a>
+                    <a asp-action="Comments" class="list-group-item list-group-item-action">
+                        💬 My Comments
+                    </a>
+                    <a asp-action="Settings" class="list-group-item list-group-item-action">
+                        ⚙️ Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="col-md-9">
+            <!-- Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h2 class="text-primary">@Model.TotalOrders</h2>
+                            <p class="mb-0">Total Orders</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h2 class="text-success">$@Model.TotalSpent.ToString("N2")</h2>
+                            <p class="mb-0">Total Spent</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h2 class="text-warning">@Model.TotalReviews</h2>
+                            <p class="mb-0">Reviews</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h2 class="text-info">@Model.TotalComments</h2>
+                            <p class="mb-0">Comments</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Personal Information</h5>
+                    <a asp-action="Edit" class="btn btn-sm btn-outline-primary">Edit</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <strong>Full Name:</strong>
+                            <p>@(Model.FullName ?? "Not provided")</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Email:</strong>
+                            <p>@Model.Email</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Phone:</strong>
+                            <p>@(Model.PhoneNumber ?? "Not provided")</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Date of Birth:</strong>
+                            <p>@(Model.DateOfBirth?.ToString("MMM dd, yyyy") ?? "Not provided")</p>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Bio))
+                    {
+                            <div class="mb-3">
+                                <strong>Bio:</strong>
+                                <p>@Model.Bio</p>
+                            </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Address))
+                    {
+                            <div>
+                                <strong>Address:</strong>
+                                <p>
+                                @Model.Address<br />
+                                @Model.City, @Model.ZipCode<br />
+                                @Model.Country
+                                </p>
+                            </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="Orders" class="btn btn-outline-primary text-start">
+                            View My Orders (@Model.TotalOrders) →
+                        </a>
+                        <a asp-action="Reviews" class="btn btn-outline-warning text-start">
+                            View My Reviews (@Model.TotalReviews) →
+                        </a>
+                        <a asp-action="Comments" class="btn btn-outline-info text-start">
+                            View My Comments (@Model.TotalComments) →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
