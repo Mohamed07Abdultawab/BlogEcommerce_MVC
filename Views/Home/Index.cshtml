@@ -69,27 +69,66 @@
 <section class="products-showcase bg-light-gray py-5">
     <div class="container-xl">
         <h2 class="section-heading text-center mb-2">Featured Products</h2>
-        <p class="section-subtitle text-center mb-5 text-secondary">Check out our handpicked selection of trending products</p>
+        <p class="section-subtitle text-center mb-5 text-secondary">
+            Check out our handpicked selection of trending products
+        </p>
 
         <div class="row g-4">
             @foreach (var product in new[] {
-                new { Text = "Product 1", Title = "Premium Wireless Headphones", Price = "$99.99", Desc = "High-quality sound with active noise cancellation", Badge = "New" },
-                new { Text = "Product 2", Title = "Smart Watch Pro", Price = "$199.99", Desc = "Track your fitness and stay connected", Badge = "Hot" },
-                new { Text = "Product 3", Title = "Laptop Backpack", Price = "$49.99", Desc = "Durable and stylish with multiple compartments", Badge = "Sale" }
+                new {
+                    Title = "Pen",
+                    Desc = "Blue ink pen 0.7mm smooth writing...",
+                    Price = "$10.00",
+                    Stock = 93,
+                    Tag = "studying",
+                    Img = "/images/Pen.jpg"
+                },
+                new {
+                    Title = "Notebook",
+                    Desc = "A5 spiral notebook 120 pages...",
+                    Price = "$25.00",
+                    Stock = 144,
+                    Tag = "studying",
+                    Img = "/images/NotBook.jpg"
+                },
+                new {
+                    Title = "Wooden Pencil",
+                    Desc = "HB pencil for writing and sketching...",
+                    Price = "$3.50",
+                    Stock = 239,
+                    Tag = "studying",
+                    Img = "/images/WoodenPencil.jpg"
+                }
             })
             {
                     <div class="col-md-4">
-                        <div class="product-card card h-100 shadow-sm">
+                         <div class="feature-card card h-100 shadow-sm">
                             <div class="product-image position-relative">
-                                <img src="https://via.placeholder.com/400x300/EAEAEA/333?text=@product.Text" alt="@product.Title" class="img-fluid rounded-top">
-                                <span class="product-badge badge rounded-pill badge-error-bg">@product.Badge</span>
+                                <img src="@product.Img" alt="@product.Title" class="img-fluid rounded-top" />
+
+                                <span class="badge bg-secondary position-absolute" style="top: 10px; left: 10px;">
+                                @product.Tag
+                                </span>
                             </div>
+
                             <div class="product-body card-body pt-4">
-                                <h5 class="product-title card-title fw-bold">@product.Title</h5>
-                                <p class="product-price fw-bolder fs-4 text-error-accent">@product.Price</p>
-                                <p class="product-description card-text text-secondary">@product.Desc</p>
-                                <a asp-controller="Products" asp-action="Index" class="btn btn-primary-accent w-100 mt-2">
-                                    <i class="fas fa-shopping-cart me-2"></i> View Details
+                                <h5 class="product-title fw-bold">@product.Title</h5>
+
+                                <p class="product-description text-secondary mb-2">
+                                @product.Desc
+                                </p>
+
+                                <p class="product-price fw-bolder fs-2 text-danger mb-1">
+                                @product.Price
+                                </p>
+
+                                <p class="text-success fw-bold mb-3">
+                                    <i class="fas fa-check-circle me-1"></i> In Stock: @product.Stock
+                                </p>
+
+                                <a asp-controller="Products" asp-action="Index"
+                                   class="btn btn-primary w-100 mt-auto">
+                                    <i class="fas fa-eye me-2"></i> View Details
                                 </a>
                             </div>
                         </div>
@@ -108,31 +147,72 @@
 <section class="blog-section py-5">
     <div class="container-xl">
         <h2 class="section-heading text-center mb-2">Latest from Our Blog</h2>
-        <p class="section-subtitle text-center mb-5 text-secondary">Stay informed with our latest articles and insights</p>
+        <p class="section-subtitle text-center mb-5 text-secondary">
+            Stay informed with our latest articles and insights
+        </p>
 
         <div class="row g-4">
             @foreach (var post in new[] {
-                new { Category = "Technology", Title = "10 Must-Have Gadgets in 2025", Date = "Jan 15, 2025" },
-                new { Category = "Lifestyle", Title = "Smart Shopping Tips for 2025", Date = "Jan 12, 2025" },
-                new { Category = "Reviews", Title = "Product Reviews: Headphones", Date = "Jan 10, 2025" }
+                new {
+                    Category = "studying",
+                    Title = "Erase Mistakes, Not Ideas",
+                    Desc = "A reliable white eraser that removes graphite without tearing the page....",
+                    Author = "Sara Nabil",
+                    Date = "Nov 29, 2025",
+                    Img = "/images/EraseMistakes.jpg"
+                },
+                new {
+                    Category = "studying",
+                    Title = "Measure Twice, Cut Once",
+                    Desc = "Transparent ruler with precise markings — helpful for design and drafting....",
+                    Author = "Karim Adel",
+                    Date = "Nov 28, 2025",
+                    Img = "/images/MeasureTwice.jpg"
+                },
+                new {
+                    Category = "office",
+                    Title = "Markers That Last",
+                    Desc = "Permanent black marker with a durable tip — ideal for labels and presentations....",
+                    Author = "Leila Mostafa",
+                    Date = "Nov 27, 2025",
+                    Img = "/images/Markers.jpg"
+                }
             })
             {
                     <div class="col-md-4">
-                        <div class="blog-card card h-100 shadow-sm">
+                         <div class="feature-card card h-100 shadow-sm">
                             <div class="blog-image">
-                                <img src="https://via.placeholder.com/400x250/F4F4F4/333?text=@post.Category" alt="@post.Title" class="img-fluid rounded-top">
+                                <img src="@post.Img" alt="@post.Title" class="img-fluid rounded-top" />
                             </div>
+
                             <div class="blog-body card-body">
-                                <span class="blog-category badge rounded-pill bg-gray-light text-primary mb-2">@post.Category</span>
-                                <h5 class="blog-title card-title fw-bold"><a href="#" class="text-primary-link">@post.Title</a></h5>
-                                <p class="blog-meta text-muted small">
-                                    <i class="far fa-calendar me-1"></i> @post.Date | 
-                                    <i class="far fa-user ms-2 me-1"></i> Admin
+                                <span class="badge rounded-pill bg-light border text-secondary small px-3 py-1 mb-3">
+                                @post.Category
+                                </span>
+
+                                <h5 class="blog-title card-title fw-bold mb-2">
+                                    <a href="#" class="text-decoration-none text-dark">
+                                    @post.Title
+                                    </a>
+                                </h5>
+
+                                <p class="blog-excerpt card-text text-secondary small mb-3">
+                                @post.Desc
                                 </p>
-                                <p class="blog-excerpt card-text text-secondary small">
-                                    Discover the latest trends and insights that will revolutionize your daily life...
-                                </p>
-                                <a asp-controller="Blog" asp-action="Index" class="btn btn-read-more btn-sm mt-2">
+
+                                <div class="blog-meta text-muted small d-flex align-items-center mb-3">
+                                    <div class="me-3">
+                                        <i class="fas fa-user me-1"></i>
+                                        <span class="fw-semibold">By @post.Author</span>
+                                    </div>
+                                    <div>
+                                        <i class="far fa-calendar-alt me-1"></i>
+                                    @post.Date
+                                    </div>
+                                </div>
+
+                                <a asp-controller="Blog" asp-action="Index"
+                                   class="text-decoration-none fw-semibold small text-primary">
                                     Read More <i class="fas fa-arrow-right ms-1"></i>
                                 </a>
                             </div>
@@ -148,6 +228,7 @@
         </div>
     </div>
 </section>
+
 
 <section class="cta-section bg-custom-dark text-white py-5">
     <div class="container-xl text-center">
