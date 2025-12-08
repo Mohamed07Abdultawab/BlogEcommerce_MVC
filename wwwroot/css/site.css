@@ -2189,3 +2189,27 @@ About Us Styles
 .col-lg-6 img {
     border-radius: 50px;
 }
+
+/*
+====================================
+Blog Details Styles (Fixing white-space)
+====================================
+*/
+
+.post-content {
+    /* التنسيقات الأساسية: خط كبير ومسافة بين السطور */
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: var(--color-primary-text);
+}
+
+.post-content-formatted {
+    /* الحل: يجعل المتصفح يحترم فواصل الأسطر العادية (مثل الضغط على Enter) */
+    white-space: pre-wrap;
+    /* ندمج الآن التنسيقات الأساسية هنا */
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: var(--color-primary-text);
+    /* لضمان كسر الكلمات الطويلة */
+    word-break: break-word;
+}
