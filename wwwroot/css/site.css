@@ -837,3 +837,177 @@ Admin Delete Styles
 /* Buttons (defined in previous steps, ensuring they are used correctly here) */
 /* .btn-danger-custom (Red) */
 /* .btn-outline-secondary (Monochrome Outline) */
+
+/*
+====================================
+Product Index Styles
+====================================
+*/
+
+/* Product Card */
+.product-card-full {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--color-background-light);
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+
+    .product-card-full:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-5px);
+    }
+
+.product-post-img {
+    height: 300px; /* ارتفاع ثابت للصور */
+    object-fit: cover;
+    width: 100%;
+}
+
+.product-title {
+    font-weight: 700;
+    color: var(--color-primary-text);
+    font-size: 1.3rem;
+}
+
+.product-price-accent {
+    /* اللون الأحمر لتمييز السعر */
+    color: var(--color-error-red) !important;
+    font-size: 1.8rem;
+}
+
+/* Stock Status Colors */
+.text-success-accent {
+    color: var(--color-success-green) !important; /* لون أخضر للمخزون المتوفر */
+}
+
+.text-danger-accent {
+    color: var(--color-error-red) !important; /* لون أحمر للمخزون غير المتوفر */
+}
+
+/*
+====================================
+Accent Color Definitions (Add/Update)
+====================================
+*/
+
+:root {
+    /* ... (Existing variables like --color-success-green: #28A745;) ... */
+}
+
+/* Success Accent Button (Used for Add to Cart, Create Product, Confirm) */
+.btn-success-accent {
+    background-color: var(--color-success-green) !important;
+    border: 1px solid var(--color-success-green) !important;
+    color: white !important;
+    font-weight: 600;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+    .btn-success-accent:hover {
+        background-color: #1e7e34 !important; /* ظل أغمق للأخضر */
+        border-color: #1c7430 !important;
+    }
+
+/*
+====================================
+Admin Form Styles (reusing Blog styles)
+====================================
+*/
+/* The form classes like form-card, form-control-custom, form-label, etc., 
+   are already defined in the previous steps (Blog/Create) and will be reused here
+   to maintain a consistent look for all admin forms.
+*/
+
+/*
+====================================
+Product Details Styles
+====================================
+*/
+
+/* Product Details Layout */
+.product-main-image {
+    max-height: 550px;
+    object-fit: cover;
+    border: 1px solid var(--color-border-light);
+    border-radius: 12px !important;
+}
+
+.product-title-detail {
+    color: var(--color-primary-text);
+    font-size: 2.5rem;
+}
+
+.product-description-detail {
+    line-height: 1.6;
+}
+
+/* Price & CTA */
+.product-price-accent {
+    /* اللون الأحمر لتمييز السعر بوضوح */
+    color: var(--color-error-red) !important;
+    font-size: 3rem;
+    letter-spacing: -1px;
+}
+
+.product-qty-input {
+    text-align: center;
+    max-width: 80px;
+    border-right: none !important;
+}
+
+/* Success & Danger Alerts */
+.alert-success-custom {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger-custom {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Reviews & Rating */
+.text-warning-accent {
+    color: #FFC107; /* أصفر/ذهبي للنجوم المملوءة */
+    font-size: 1.5rem;
+    line-height: 1;
+    margin-right: 2px;
+}
+
+.text-muted-star {
+    color: var(--color-border-light); /* رمادي فاتح للنجوم الفارغة */
+    font-size: 1.5rem;
+    line-height: 1;
+    margin-right: 2px;
+}
+
+.rating-text {
+    color: var(--color-secondary-text);
+    font-size: 0.95rem;
+}
+
+.comment-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-gray); /* خلفية رمادية فاتحة للتعليقات */
+}
+
+.btn-outline-warning-custom {
+    /* تخصيص زر التقييم ليتناسب مع Monochrome */
+    color: #FFC107;
+    border-color: #FFC107;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .btn-outline-warning-custom:hover {
+        background-color: #FFC107;
+        color: var(--color-background-dark); /* نص داكن عند الـ hover */
+    }
+
+.btn-check:checked + .btn-outline-warning-custom {
+    background-color: #FFC107;
+    color: var(--color-background-dark);
+}
