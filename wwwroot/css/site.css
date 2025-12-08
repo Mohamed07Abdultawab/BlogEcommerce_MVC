@@ -1011,3 +1011,252 @@ Product Details Styles
     background-color: #FFC107;
     color: var(--color-background-dark);
 }
+
+
+/*
+====================================
+Shopping Cart Styles
+====================================
+*/
+
+/* Table Structure */
+.cart-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.table-header-monochrome th {
+    background-color: var(--color-background-gray) !important; /* خلفية رمادية فاتحة لرأس الجدول */
+    color: var(--color-primary-text);
+    border-top: 2px solid var(--color-primary-text) !important;
+    border-bottom: 1px solid var(--color-border-light) !important;
+    font-weight: 600;
+}
+
+.cart-item-row {
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+/* Product Image */
+.cart-item-img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border: 1px solid var(--color-border-light);
+    border-radius: 6px;
+}
+
+/* Quantity Control */
+.quantity-control {
+    width: 120px;
+    border: 1px solid var(--color-border-light);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.btn-monochrome-qty {
+    color: var(--color-primary-text) !important;
+    border: none !important;
+    background-color: var(--color-background-light) !important;
+    font-weight: 600;
+}
+
+    .btn-monochrome-qty:hover {
+        background-color: var(--color-background-gray) !important;
+    }
+
+.cart-qty-input {
+    border: none !important;
+    background-color: var(--color-background-light) !important;
+    color: var(--color-primary-text) !important;
+    font-weight: 600;
+}
+
+/* Remove Button (Red Accent) */
+.btn-remove-item {
+    background-color: var(--color-error-red) !important;
+    border-color: var(--color-error-red) !important;
+    color: white !important;
+}
+
+/* Order Summary Card */
+.order-summary-card {
+    border: 2px solid var(--color-background-dark); /* إطار داكن لتمييزه */
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.order-summary-title {
+    color: var(--color-primary-text);
+}
+
+.summary-divider {
+    border-top: 1px solid var(--color-border-light);
+}
+
+.total-row {
+    padding-top: 8px;
+    color: var(--color-primary-text);
+}
+
+.text-error-accent {
+    /* يستخدم للأسعار النهائية لزيادة الفت الانتباه */
+    color: var(--color-error-red) !important;
+}
+
+/* Empty Cart */
+.empty-cart-message {
+    padding-top: 6rem !important;
+    padding-bottom: 6rem !important;
+}
+
+/* Custom Success/Danger Alerts (Already defined but included for context) */
+.alert-success-custom {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger-custom {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/*
+====================================
+Checkout Styles
+====================================
+*/
+
+.checkout-form-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 12px;
+    background-color: var(--color-background-light);
+}
+
+.section-divider-light {
+    border-top: 1px solid var(--color-border-light);
+}
+
+/* Form Controls (reusing existing styles) */
+/* .form-control-custom (Inputs) */
+/* .form-label (Labels) */
+
+
+/* Payment Options */
+.payment-option {
+    padding: 10px 15px;
+    border: 1px solid var(--color-border-light);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s;
+}
+
+    .payment-option:has(input:checked) {
+        background-color: var(--color-background-gray); /* رمادي فاتح عند التحديد */
+        border-color: var(--color-accent-blue); /* إطار أزرق عند التحديد */
+    }
+
+/* Order Summary (Reusing Cart styles) */
+.order-summary-card {
+    /* تطبيق نفس التنسيق من صفحة Cart Index */
+    border: 2px solid var(--color-background-dark);
+    border-radius: 8px;
+}
+
+.checkout-form-card .place-order-btn {
+    /* زر الدفع بلون أخضر (Success Accent) */
+    font-weight: 700;
+}
+
+/* Help Card */
+.help-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 12px;
+    background-color: var(--color-background-light);
+}
+
+.btn-outline-primary-accent {
+    /* زر الدعم بلون التمييز (أزرق) */
+    color: var(--color-accent-blue);
+    border: 1px solid var(--color-accent-blue);
+}
+
+    .btn-outline-primary-accent:hover {
+        background-color: var(--color-accent-blue);
+        color: white;
+    }
+
+/*
+====================================
+Order Confirmation Styles
+====================================
+*/
+
+/* Header & Success Icon */
+.confirmation-header {
+    background-color: var(--color-background-gray); /* خلفية رمادية فاتحة للـ Header */
+    padding: 3rem 0;
+    border-radius: 8px;
+    border: 1px solid var(--color-border-light);
+}
+
+.confirmation-icon {
+    /* تم تعريف اللون الأخضر مسبقاً: --color-success-green */
+    color: var(--color-success-green);
+}
+
+/* Info Cards (Details & Shipping) */
+.info-card-monochrome {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+    .info-card-monochrome .card-header {
+        background-color: var(--color-background-gray) !important;
+        border-bottom: 1px solid var(--color-border-light);
+        padding: 10px 15px;
+    }
+
+/* Order Items Table */
+.order-items-table {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+    .order-items-table thead .table-header-monochrome th {
+        background-color: var(--color-background-light) !important;
+        color: var(--color-primary-text);
+        border-bottom: 2px solid var(--color-border-light);
+        font-weight: 600;
+    }
+
+    .order-items-table tbody tr {
+        border-bottom: 1px solid var(--color-border-light);
+    }
+
+        .order-items-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+    .order-items-table tfoot .table-footer-monochrome {
+        border-top: 2px solid var(--color-primary-text) !important;
+        background-color: var(--color-background-gray); /* تمييز الـ Footer */
+    }
+
+    .order-items-table tfoot td {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+.item-name-col {
+    width: 50%;
+}
+
+/* Final Total Color (Red/Accent) */
+.text-error-accent {
+    color: var(--color-error-red) !important;
+}

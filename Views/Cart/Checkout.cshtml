@@ -1,86 +1,120 @@
 ﻿@model BlogEcommerce.Models.Order
 
 @{
-    ViewData["Title"] = "Checkout";
+    ViewData["Title"] = "Secure Checkout";
 }
 
-<div class="container mt-4">
-    <h1>Checkout</h1>
-    <hr />
+<div class="container-xl py-5">
+
+    <h1 class="page-title fw-bold mb-4">💳 Secure Checkout</h1>
+    <hr class="section-divider mb-5" />
 
     <div class="row">
-        <div class="col-md-8">
-            <h4>Shipping Information</h4>
-            <form asp-action="PlaceOrder" method="post">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="CustomerName" class="form-label"></label>
-                        <input asp-for="CustomerName" class="form-control" required />
-                        <span asp-validation-for="CustomerName" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email" type="email" class="form-control" required />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                </div>
 
-                <div class="mb-3">
-                    <label asp-for="Phone" class="form-label"></label>
-                    <input asp-for="Phone" class="form-control" required />
-                    <span asp-validation-for="Phone" class="text-danger"></span>
-                </div>
+        <div class="col-lg-7 mb-5 mb-lg-0">
+            <div class="card p-4 checkout-form-card shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold mb-4 text-primary-text border-bottom pb-2">Shipping Information</h4>
 
-                <div class="mb-3">
-                    <label asp-for="Address" class="form-label"></label>
-                    <input asp-for="Address" class="form-control" required />
-                    <span asp-validation-for="Address" class="text-danger"></span>
-                </div>
+                    <form asp-action="PlaceOrder" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger-custom text-danger-accent mb-4 p-2"></div>
 
-                <div class="row">
-                    <div class="col-md-8 mb-3">
-                        <label asp-for="City" class="form-label"></label>
-                        <input asp-for="City" class="form-control" required />
-                        <span asp-validation-for="City" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label asp-for="ZipCode" class="form-label"></label>
-                        <input asp-for="ZipCode" class="form-control" required />
-                        <span asp-validation-for="ZipCode" class="text-danger"></span>
-                    </div>
-                </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="CustomerName" class="form-label fw-bold small">Full Name</label>
+                                <input asp-for="CustomerName" class="form-control form-control-custom" required />
+                                <span asp-validation-for="CustomerName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Email" class="form-label fw-bold small">Email Address</label>
+                                <input asp-for="Email" type="email" class="form-control form-control-custom" required />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                        </div>
 
-                <hr class="my-4">
+                        <div class="mb-4">
+                            <label asp-for="Phone" class="form-label fw-bold small">Phone Number</label>
+                            <input asp-for="Phone" class="form-control form-control-custom" required />
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
 
-                <h4>Payment Method</h4>
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="cod" checked>
-                        <label class="form-check-label" for="cod">
-                            Cash on Delivery
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="card" value="card" disabled>
-                        <label class="form-check-label" for="card">
-                            Credit Card (Coming Soon)
-                        </label>
-                    </div>
-                </div>
+                        <div class="mb-4">
+                            <label asp-for="Address" class="form-label fw-bold small">Street Address</label>
+                            <input asp-for="Address" class="form-control form-control-custom" required />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
 
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-success btn-lg">Place Order</button>
-                    <a asp-action="Index" class="btn btn-outline-secondary">Back to Cart</a>
+                        <div class="row">
+                            <div class="col-md-8 mb-4">
+                                <label asp-for="City" class="form-label fw-bold small">City</label>
+                                <input asp-for="City" class="form-control form-control-custom" required />
+                                <span asp-validation-for="City" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label asp-for="ZipCode" class="form-label fw-bold small">Zip Code</label>
+                                <input asp-for="ZipCode" class="form-control form-control-custom" required />
+                                <span asp-validation-for="ZipCode" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <hr class="my-5 section-divider-light">
+
+                        <h4 class="fw-bold mb-4 text-primary-text border-bottom pb-2">Payment Method</h4>
+                        <div class="payment-options mb-5">
+                            <div class="form-check payment-option mb-2">
+                                <input class="form-check-input payment-radio" type="radio" name="paymentMethod" id="cod" value="cod" checked>
+                                <label class="form-check-label fw-bold" for="cod">
+                                    <i class="fas fa-money-bill me-2"></i> Cash on Delivery (COD)
+                                </label>
+                            </div>
+                            <div class="form-check payment-option">
+                                <input class="form-check-input payment-radio" type="radio" name="paymentMethod" id="card" value="card" disabled>
+                                <label class="form-check-label text-muted" for="card">
+                                    <i class="fas fa-credit-card me-2"></i> Credit Card (Coming Soon)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-success-accent btn-lg place-order-btn">
+                                <i class="fas fa-box-open me-2"></i> Place Order
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i> Back to Cart
+                            </a>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Need Help?</h5>
-                    <p class="card-text">If you have any questions about your order, feel free to contact us.</p>
-                    <a href="#" class="btn btn-outline-primary w-100">Contact Support</a>
+        <div class="col-lg-5">
+            <div class="card order-summary-card shadow-lg sticky-top mb-4">
+                 <div class="card-body p-4">
+                     <h5 class="card-title fw-bold order-summary-title mb-3">Your Order (3 Items)</h5>
+                     <hr class="summary-divider" />
+                     <div class="d-flex justify-content-between mb-2 summary-row">
+                         <span>Subtotal:</span>
+                         <span>$150.00</span>
+                     </div>
+                     <div class="d-flex justify-content-between mb-2 summary-row">
+                         <span>Shipping:</span>
+                         <span class="text-success-accent fw-bold">Free</span>
+                     </div>
+                     <hr class="summary-divider" />
+                     <div class="d-flex justify-content-between mb-0 total-row">
+                         <strong class="fs-4">Total Due:</strong>
+                         <strong class="fs-3 text-error-accent">$150.00</strong>
+                     </div>
+                 </div>
+            </div>
+
+            <div class="card p-3 help-card">
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold text-primary-text mb-3"><i class="fas fa-headset me-1"></i> Need Help?</h5>
+                    <p class="card-text text-secondary">If you have any questions about your order, our team is ready to assist.</p>
+                    <a href="#" class="btn btn-outline-primary-accent w-100">Contact Support</a>
                 </div>
             </div>
         </div>
