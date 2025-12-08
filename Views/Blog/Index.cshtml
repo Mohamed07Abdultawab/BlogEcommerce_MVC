@@ -6,119 +6,145 @@
     ViewData["Title"] = "Blog Posts";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Blog Posts</h1>
+<div class="container-xl py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3">
+        <h1 class="page-title fw-bold">Latest Insights & News</h1>
         @if (User.IsInRole("Admin"))
         {
-            <a asp-action="Create" class="btn btn-primary">Create New Post</a>
+                <a asp-action="Create" class="btn btn-primary-accent btn-lg">
+                    <i class="fas fa-plus-circle me-2"></i> Create New Post
+                </a>
         }
     </div>
 
-    <!-- Search and Filter Section -->
-    <div class="card mb-4">
-        <div class="card-body">
+    <div class="search-filter-card mb-5">
+        <div class="card-body p-4">
             <form asp-action="Index" method="get">
-                <div class="row">
-                    <div class="col-md-6">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-5 col-lg-6">
                         <div class="input-group">
-                            <input type="text" name="searchString" class="form-control" placeholder="Search blog posts..." value="@ViewBag.CurrentSearch">
-                            <button type="submit" class="btn btn-primary">Search</button>
+                            <input type="text" name="searchString" class="form-control filter-input" placeholder="Search blog posts by title or keyword..." value="@ViewBag.CurrentSearch">
+                            <button type="submit" class="btn btn-primary-accent search-button">
+                                <i class="fas fa-search"></i> Search
+                            </button>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <select name="category" class="form-select">
+                    <div class="col-md-5 col-lg-4">
+                        <select name="category" class="form-select filter-select">
                             <option value="">All Categories</option>
                             @if (ViewBag.Categories != null)
                             {
                                 @foreach (var cat in (List<string>)ViewBag.Categories)
                                 {
-                                    <option value="@cat" selected="@(ViewBag.CurrentCategory == cat)">@cat</option>
+                                            <option value="@cat" selected="@(ViewBag.CurrentCategory == cat)">@cat</option>
                                 }
                             }
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <a asp-action="Index" class="btn btn-secondary w-100">Clear</a>
+                    <div class="col-md-2 col-lg-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-undo"></i> Clear
+                        </a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Results Count -->
-    <p class="text-muted">Showing @Model.Count of @Model.TotalItemCount posts</p>
+    <p class="text-secondary mb-4 fs-6">
+        <span class="fw-bold">@Model.Count</span> of <span class="fw-bold">@Model.TotalItemCount</span> posts found.
+    </p>
 
     <div class="row">
         @foreach (var item in Model)
         {
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    @if (!string.IsNullOrEmpty(item.ImageUrl))
-                    {
-                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title" style="height: 200px; object-fit: cover;">
-                    }
-                    <div class="card-body">
-                        <h5 class="card-title">@item.Title</h5>
-                        <p class="card-text">@item.Content.Substring(0, Math.Min(150, item.Content.Length))...</p>
-                        <p class="text-muted">
-                            <small>By @item.Author | @item.CreatedDate.ToString("MMM dd, yyyy")</small>
+                <div class="col-md-6 col-lg-4 mb-5">
+                    <div class="blog-card-full h-100">
+                        <div class="blog-image-wrapper">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                                    <img src="@item.ImageUrl" class="card-img-top blog-post-img" alt="@item.Title" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x350/F8F8F8/333?text=Blog+Image';" >
+                        }
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="blog-meta-badges mb-2">
                             @if (!string.IsNullOrEmpty(item.Category))
                             {
-                                <span class="badge bg-secondary">@item.Category</span>
+                                        <span class="badge rounded-pill bg-gray-light text-primary me-2">@item.Category</span>
                             }
                             @if (item.Comments.Any())
                             {
-                                <span class="badge bg-info">@item.Comments.Count comments</span>
+                                        <span class="badge rounded-pill badge-success-bg">
+                                            <i class="far fa-comment me-1"></i> @item.Comments.Count
+                                        </span>
                             }
-                        </p>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Read More</a>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                        }
+                            </div>
+
+                            <h5 class="card-title blog-post-title fw-bold">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="text-primary-link">@item.Title</a>
+                            </h5>
+                            <p class="card-text text-secondary blog-excerpt-text">
+                            @item.Content.Substring(0, Math.Min(120, item.Content.Length))...
+                            </p>
+
+                            <p class="text-muted small blog-meta-info mb-3">
+                                <i class="fas fa-user me-1"></i> By <span class="fw-bold">@item.Author</span> | <i class="far fa-calendar-alt ms-2 me-1"></i> @item.CreatedDate.ToString("MMM dd, yyyy")
+                            </p>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-read-more btn-sm px-3">
+                                    Read More <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                        <div>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning-custom me-2"><i class="fas fa-edit"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger-custom"><i class="fas fa-trash-alt"></i></a>
+                                        </div>
+                            }
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
         }
     </div>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info">
-            <h4>No blog posts found</h4>
-            <p>Try adjusting your search or filter criteria.</p>
-            <a asp-action="Index" class="btn btn-primary">View All Posts</a>
-        </div>
+            <div class="alert alert-info-custom text-center py-4 my-5">
+                <h4 class="alert-heading text-primary-text fw-bold">No blog posts found</h4>
+                <p>Try adjusting your search or filter criteria, or view all posts again.</p>
+                <a asp-action="Index" class="btn btn-primary-accent mt-3">View All Posts</a>
+            </div>
     }
 
-    <!-- Pagination -->
     @if (Model.PageCount > 1)
     {
-        <nav aria-label="Blog pagination">
-            <ul class="pagination justify-content-center">
+            <nav aria-label="Blog pagination" class="my-5">
+                <ul class="pagination justify-content-center pagination-custom">
                 @if (Model.HasPreviousPage)
                 {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" asp-route-searchString="@ViewBag.CurrentSearch" asp-route-category="@ViewBag.CurrentCategory">Previous</a>
-                    </li>
+                            <li class="page-item-custom">
+                                <a class="page-link-custom" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" asp-route-searchString="@ViewBag.CurrentSearch" asp-route-category="@ViewBag.CurrentCategory"><i class="fas fa-angle-left"></i></a>
+                            </li>
                 }
 
                 @for (int i = 1; i <= Model.PageCount; i++)
                 {
-                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@ViewBag.CurrentSearch" asp-route-category="@ViewBag.CurrentCategory">@i</a>
-                    </li>
+                            <li class="page-item-custom @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link-custom" asp-action="Index" asp-route-page="@i" asp-route-searchString="@ViewBag.CurrentSearch" asp-route-category="@ViewBag.CurrentCategory">@i</a>
+                            </li>
                 }
 
                 @if (Model.HasNextPage)
                 {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" asp-route-searchString="@ViewBag.CurrentSearch" asp-route-category="@ViewBag.CurrentCategory">Next</a>
-                    </li>
+                            <li class="page-item-custom">
+                                <a class="page-link-custom" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" asp-route-searchString="@ViewBag.CurrentSearch" asp-route-category="@ViewBag.CurrentCategory"><i class="fas fa-angle-right"></i></a>
+                            </li>
                 }
-            </ul>
-        </nav>
+                </ul>
+            </nav>
     }
 </div>

@@ -1,8 +1,168 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero-section py-5 py-md-6 mb-5">
+    <div class="container-xl">
+        <div class="row align-items-center">
+            <div class="col-lg-6 hero-content pt-lg-5">
+                <h1 class="hero-title display-4 fw-bold mb-3">
+                    Welcome to <span class="text-accent-blue-title">BlogEcommerce</span>
+                </h1>
+                <p class="hero-subtitle lead text-secondary mb-4">
+                    Discover amazing products and insightful content. Your journey to smarter shopping starts here!
+                </p>
+                <div class="hero-buttons d-flex gap-3 mt-4">
+                    <a asp-controller="Products" asp-action="Index" class="btn btn-primary-accent btn-lg px-4">
+                        <i class="fas fa-shopping-bag me-2"></i> Shop Now
+                    </a>
+                    <a asp-controller="Blog" asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="fas fa-book-open me-2"></i> Read Blog
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center d-none d-lg-block">
+
+                <img src="~/images/Ecommerce.jpg"
+                     alt="Shopping Illustration" 
+                     class="img-fluid hero-image rounded-3 shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider my-0">
+
+<section class="features-section py-5">
+    <div class="container-xl">
+        <h2 class="section-heading text-center mb-2">Why Choose Us?</h2>
+        <p class="section-subtitle text-center mb-5 text-secondary">Experience the best online shopping with these amazing features</p>
+
+        <div class="row g-4">
+            @foreach (var feature in new[] {
+                new { Icon = "fas fa-shipping-fast", Title = "Fast Shipping", Desc = "Get your orders delivered quickly with our express shipping service. Track your package every step of the way." },
+                new { Icon = "fas fa-shield-alt", Title = "Secure Payment", Desc = "Shop with confidence knowing your transactions are protected with industry-leading security measures." },
+                new { Icon = "fas fa-headset", Title = "24/7 Support", Desc = "Our dedicated support team is always ready to help you with any questions or concerns you may have." },
+                new { Icon = "fas fa-undo-alt", Title = "Easy Returns", Desc = "Not satisfied? No problem! Return products within 30 days for a full refund with our hassle-free return policy." },
+                new { Icon = "fas fa-star", Title = "Premium Quality", Desc = "We carefully curate every product to ensure you receive only the highest quality items for your money." },
+                new { Icon = "fas fa-blog", Title = "Expert Blog", Desc = "Read insightful articles from industry experts to make informed purchasing decisions and stay updated." }
+            })
+            {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="feature-card text-center p-4">
+                            <div class="feature-icon mb-3">
+                                <i class="@feature.Icon icon-accent-lg"></i>
+                            </div>
+                            <h5 class="feature-title fw-bold mb-2">@feature.Title</h5>
+                            <p class="feature-description text-secondary mb-0">
+                            @feature.Desc
+                            </p>
+                        </div>
+                    </div>
+            }
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<section class="products-showcase bg-light-gray py-5">
+    <div class="container-xl">
+        <h2 class="section-heading text-center mb-2">Featured Products</h2>
+        <p class="section-subtitle text-center mb-5 text-secondary">Check out our handpicked selection of trending products</p>
+
+        <div class="row g-4">
+            @foreach (var product in new[] {
+                new { Text = "Product 1", Title = "Premium Wireless Headphones", Price = "$99.99", Desc = "High-quality sound with active noise cancellation", Badge = "New" },
+                new { Text = "Product 2", Title = "Smart Watch Pro", Price = "$199.99", Desc = "Track your fitness and stay connected", Badge = "Hot" },
+                new { Text = "Product 3", Title = "Laptop Backpack", Price = "$49.99", Desc = "Durable and stylish with multiple compartments", Badge = "Sale" }
+            })
+            {
+                    <div class="col-md-4">
+                        <div class="product-card card h-100 shadow-sm">
+                            <div class="product-image position-relative">
+                                <img src="https://via.placeholder.com/400x300/EAEAEA/333?text=@product.Text" alt="@product.Title" class="img-fluid rounded-top">
+                                <span class="product-badge badge rounded-pill badge-error-bg">@product.Badge</span>
+                            </div>
+                            <div class="product-body card-body pt-4">
+                                <h5 class="product-title card-title fw-bold">@product.Title</h5>
+                                <p class="product-price fw-bolder fs-4 text-error-accent">@product.Price</p>
+                                <p class="product-description card-text text-secondary">@product.Desc</p>
+                                <a asp-controller="Products" asp-action="Index" class="btn btn-primary-accent w-100 mt-2">
+                                    <i class="fas fa-shopping-cart me-2"></i> View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+            }
+        </div>
+
+        <div class="text-center mt-5">
+            <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary btn-lg px-5">
+                <i class="fas fa-store me-2"></i> View All Products
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="blog-section py-5">
+    <div class="container-xl">
+        <h2 class="section-heading text-center mb-2">Latest from Our Blog</h2>
+        <p class="section-subtitle text-center mb-5 text-secondary">Stay informed with our latest articles and insights</p>
+
+        <div class="row g-4">
+            @foreach (var post in new[] {
+                new { Category = "Technology", Title = "10 Must-Have Gadgets in 2025", Date = "Jan 15, 2025" },
+                new { Category = "Lifestyle", Title = "Smart Shopping Tips for 2025", Date = "Jan 12, 2025" },
+                new { Category = "Reviews", Title = "Product Reviews: Headphones", Date = "Jan 10, 2025" }
+            })
+            {
+                    <div class="col-md-4">
+                        <div class="blog-card card h-100 shadow-sm">
+                            <div class="blog-image">
+                                <img src="https://via.placeholder.com/400x250/F4F4F4/333?text=@post.Category" alt="@post.Title" class="img-fluid rounded-top">
+                            </div>
+                            <div class="blog-body card-body">
+                                <span class="blog-category badge rounded-pill bg-gray-light text-primary mb-2">@post.Category</span>
+                                <h5 class="blog-title card-title fw-bold"><a href="#" class="text-primary-link">@post.Title</a></h5>
+                                <p class="blog-meta text-muted small">
+                                    <i class="far fa-calendar me-1"></i> @post.Date | 
+                                    <i class="far fa-user ms-2 me-1"></i> Admin
+                                </p>
+                                <p class="blog-excerpt card-text text-secondary small">
+                                    Discover the latest trends and insights that will revolutionize your daily life...
+                                </p>
+                                <a asp-controller="Blog" asp-action="Index" class="btn btn-read-more btn-sm mt-2">
+                                    Read More <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+            }
+        </div>
+
+        <div class="text-center mt-5">
+            <a asp-controller="Blog" asp-action="Index" class="btn btn-primary-accent btn-lg px-5">
+                <i class="fas fa-book-open me-2"></i> View All Posts
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section bg-custom-dark text-white py-5">
+    <div class="container-xl text-center">
+        <h2 class="cta-title display-5 fw-bold mb-3">Ready to Start Shopping?</h2>
+        <p class="cta-subtitle lead text-light-gray mb-4">Join thousands of happy customers and experience the difference</p>
+        <div class="mt-4">
+            @if (User.Identity?.IsAuthenticated != true)
+            {
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary-accent btn-lg px-4 me-3">
+                        <i class="fas fa-user-plus me-2"></i> Create Account
+                    </a>
+            }
+            <a asp-controller="Products" asp-action="Index" class="btn btn-outline-light btn-lg px-4">
+                <i class="fas fa-store me-2"></i> Browse Products
+            </a>
+        </div>
+    </div>
+</section>

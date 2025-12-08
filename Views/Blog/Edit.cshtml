@@ -2,63 +2,73 @@
 
 @{
     ViewData["Title"] = "Edit Blog Post";
+    var accentColorClass = "btn-primary-accent";
 }
 
-<div class="container mt-4">
-    <h1>Edit Blog Post</h1>
+<div class="container-xl py-5">
 
-    <hr />
-    <div class="row">
-        <div class="col-md-8">
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="CreatedDate" />
+    <h1 class="page-title fw-bold mb-4">✏️ Edit Blog Post</h1>
+    <p class="text-secondary small">Last edited by you on: @DateTime.Now.ToString("MMM dd, yyyy")</p>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Title" class="control-label"></label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
+    <hr class="section-divider mb-5" />
+    <div class="row justify-content-center">
+        <div class="col-lg-9 col-xl-8">
+            <div class="card p-4 form-card shadow-sm">
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger-custom text-danger-accent mb-4 p-2"></div>
+
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CreatedDate" />
+                        <div class="form-group mb-4">
+                            <label asp-for="Title" class="form-label control-label fw-bold">Title</label>
+                            <input asp-for="Title" class="form-control form-control-custom" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Author" class="form-label control-label fw-bold">Author</label>
+                            <input asp-for="Author" class="form-control form-control-custom" />
+                            <span asp-validation-for="Author" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Category" class="form-label control-label fw-bold">Category</label>
+                            <input asp-for="Category" class="form-control form-control-custom" />
+                            <span asp-validation-for="Category" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="ImageUrl" class="form-label control-label fw-bold">Image URL</label>
+                            <input asp-for="ImageUrl" class="form-control form-control-custom" />
+                            <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="RelatedProductId" class="form-label control-label fw-bold">Related Product (Optional)</label>
+                            <select asp-for="RelatedProductId" class="form-select form-select-custom" asp-items="ViewBag.Products">
+                                <option value="">-- Select a product (optional) --</option>
+                            </select>
+                            <small class="form-text text-secondary">Link this post to a product for direct promotion.</small>
+                        </div>
+
+                        <div class="form-group mb-5">
+                            <label asp-for="Content" class="form-label control-label fw-bold">Content</label>
+                            <textarea asp-for="Content" class="form-control form-control-custom content-textarea" rows="12"></textarea>
+                            <span asp-validation-for="Content" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group d-flex justify-content-start gap-3">
+                            <button type="submit" class="btn @accentColorClass btn-lg px-4">
+                                <i class="fas fa-save me-2"></i> Save Changes
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="Author" class="control-label"></label>
-                    <input asp-for="Author" class="form-control" />
-                    <span asp-validation-for="Author" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="Category" class="control-label"></label>
-                    <input asp-for="Category" class="form-control" />
-                    <span asp-validation-for="Category" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="ImageUrl" class="control-label">Image URL</label>
-                    <input asp-for="ImageUrl" class="form-control" />
-                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                </div>
-
-                <!-- Add Product Selector -->
-                <div class="form-group mb-3">
-                    <label asp-for="RelatedProductId" class="control-label">Related Product (Optional)</label>
-                    <select asp-for="RelatedProductId" class="form-select" asp-items="ViewBag.Products">
-                        <option value="">-- Select a product (optional) --</option>
-                    </select>
-                    <small class="form-text text-muted">Link this blog post to a product to show "View Product" button</small>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="Content" class="control-label"></label>
-                    <textarea asp-for="Content" class="form-control" rows="10"></textarea>
-                    <span asp-validation-for="Content" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-primary" />
-                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
