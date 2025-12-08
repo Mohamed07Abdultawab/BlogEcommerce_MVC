@@ -1,7 +1,7 @@
 ﻿@using System.Collections
 @using System.Linq
 @{
-    ViewData["Title"] = "Statistics";
+    ViewData["Title"] = "Detailed Statistics";
 
     // Safe server-side conversions (works with List<AnonymousType> too)
     var ordersByStatus = ViewBag.OrdersByStatus == null
@@ -16,14 +16,13 @@
         ? new List<dynamic>()
         : ((IEnumerable)ViewBag.TopProducts).Cast<dynamic>().ToList();
 
-    // Pre-calc totals to avoid inline dynamic arithmetic issues
+    // Pre-calc totals
     int totalOrders = 0;
     decimal totalRevenue = 0m;
     if (revenueByMonth.Any())
     {
         foreach (var r in revenueByMonth)
         {
-            // handle possible types (int, long, decimal, double)
             int oc = 0;
             decimal rev = 0m;
             try { oc = (int)r.OrderCount; } catch { oc = Convert.ToInt32(r.OrderCount); }
@@ -33,50 +32,58 @@
             totalRevenue += rev;
         }
     }
+
+    // Status Color mapping function (used for cards)
+    string GetBgColorClass(string status) => status switch
+    {
+        "Pending" => "bg-warning-custom text-dark",
+        "Completed" => "bg-success-accent text-white",
+        "Shipped" => "bg-info-accent text-white",
+        "Processing" => "bg-primary-accent text-white",
+        "Cancelled" => "bg-danger-custom text-white",
+        _ => "bg-secondary-monochrome text-white"
+    };
 }
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Detailed Statistics</h1>
-        <a asp-action="Dashboard" class="btn btn-secondary">← Back to Dashboard</a>
+<div class="container-xl py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3">
+        <h1 class="page-title fw-bold"><i class="fas fa-chart-bar me-2"></i> Detailed Statistics</h1>
+        <a asp-action="Dashboard" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
     </div>
 
-    <!-- Orders by Status -->
-    <div class="row mb-4">
+    <div class="row mb-5">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Orders by Status</h5>
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-header bg-gray-light">
+                    <h5 class="mb-0 fw-bold text-primary-text">Orders by Status Distribution</h5>
                 </div>
                 <div class="card-body">
                     @if (ordersByStatus.Any())
                     {
-                            <div class="row">
+                            <div class="row g-3 mb-4">
                             @foreach (var item in ordersByStatus)
                             {
                                 var status = item.Status ?? "";
                                 var count = 0;
                                 try { count = (int)item.Count; } catch { count = Convert.ToInt32(item.Count); }
-                                var bgColor = status == "Pending" ? "warning" :
-                                              status == "Completed" ? "success" :
-                                              status == "Shipped" ? "info" :
-                                              status == "Processing" ? "primary" : "secondary";
+                                var bgColor = GetBgColorClass(status);
 
-                                        <div class="col-md-2 col-sm-4 mb-3">
-                                            <div class="card text-white bg-@bgColor">
-                                                <div class="card-body text-center">
-                                                    <h3 class="mb-0">@count</h3>
-                                                    <p class="mb-0"><small>@status</small></p>
-                                                </div>
+                                    <div class="col-md-2 col-sm-4">
+                                        <div class="card stat-mini-card @bgColor h-100">
+                                            <div class="card-body text-center p-3">
+                                                <h3 class="mb-0 fw-bold">@count</h3>
+                                                <p class="mb-0 small-title">@status</p>
                                             </div>
                                         </div>
+                                    </div>
                             }
                             </div>
 
-                            @* <canvas id="orderStatusChart" height="80"></canvas> *@
-                                <!-- Chart Container with Fixed Size -->
                             <div class="row">
                                 <div class="col-md-6 offset-md-3">
-                                    <div style="position: relative; height: 400px;">
+                                    <div class="chart-container-fixed">
                                         <canvas id="orderStatusChart"></canvas>
                                     </div>
                                 </div>
@@ -84,27 +91,26 @@
                     }
                     else
                     {
-                            <p class="text-muted text-center">No order data available.</p>
+                            <p class="text-muted text-center py-3">No order data available.</p>
                     }
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Revenue by Month -->
-    <div class="row mb-4">
+    <div class="row mb-5">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Revenue Trend (Last 6 Months)</h5>
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-header bg-gray-light">
+                    <h5 class="mb-0 fw-bold text-primary-text">Revenue Trend (Last 6 Months)</h5>
                 </div>
                 <div class="card-body">
                     @if (revenueByMonth.Any())
                     {
                             <div class="table-responsive mb-4">
-                                <table class="table table-striped">
+                                <table class="table table-monochrome table-hover monthly-revenue-table">
                                     <thead>
-                                        <tr>
+                                        <tr class="table-header-monochrome">
                                             <th>Month</th>
                                             <th>Orders</th>
                                             <th>Revenue</th>
@@ -126,7 +132,6 @@
                                         }
                                         catch
                                         {
-                                            // fallback if Year/Month not ints
                                             monthName = $"{item.Month}/{item.Year}";
                                         }
 
@@ -135,16 +140,16 @@
                                             <tr>
                                                 <td><strong>@monthName</strong></td>
                                                 <td>@orderCount</td>
-                                                <td class="text-success"><strong>$@revenue.ToString("N2")</strong></td>
+                                                <td><strong class="text-success-accent">$@revenue.ToString("N2")</strong></td>
                                                 <td>$@avgOrder.ToString("N2")</td>
                                             </tr>
                                     }
                                     </tbody>
                                     <tfoot>
-                                        <tr class="table-primary">
+                                        <tr class="table-total-row">
                                             <td><strong>Total</strong></td>
                                             <td><strong>@totalOrders</strong></td>
-                                            <td><strong>$@totalRevenue.ToString("N2")</strong></td>
+                                            <td><strong class="text-error-accent">$@totalRevenue.ToString("N2")</strong></td>
                                             <td>-</td>
                                         </tr>
                                     </tfoot>
@@ -155,27 +160,26 @@
                     }
                     else
                     {
-                            <p class="text-muted text-center">No revenue data available for the last 6 months.</p>
+                            <p class="text-muted text-center py-3">No revenue data available for the last 6 months.</p>
                     }
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Top Selling Products -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Top 10 Best Selling Products</h5>
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-header bg-gray-light">
+                    <h5 class="mb-0 fw-bold text-primary-text">Top 10 Best Selling Products</h5>
                 </div>
                 <div class="card-body">
                     @if (topProducts.Any())
                     {
                             <div class="table-responsive">
-                                <table class="table table-hover">
+                                <table class="table table-monochrome table-hover top-products-table">
                                     <thead>
-                                        <tr>
+                                        <tr class="table-header-monochrome">
                                             <th>#</th>
                                             <th>Product Name</th>
                                             <th>Units Sold</th>
@@ -197,38 +201,37 @@
                                                 <td>
                                                 @if (rank == 1)
                                                 {
-                                                            <span class="badge bg-warning">🥇 @rank</span>
+                                                            <span class="badge badge-lg bg-warning-custom text-dark fw-bold">🥇 @rank</span>
                                                 }
                                                 else if (rank == 2)
                                                 {
-                                                            <span class="badge bg-secondary">🥈 @rank</span>
+                                                            <span class="badge badge-lg bg-secondary-monochrome text-white fw-bold">🥈 @rank</span>
                                                 }
                                                 else if (rank == 3)
                                                 {
-                                                            <span class="badge bg-danger">🥉 @rank</span>
+                                                            <span class="badge badge-lg bg-danger-custom fw-bold">🥉 @rank</span>
                                                 }
                                                 else
                                                 {
-                                                            <span class="badge bg-light text-dark">@rank</span>
+                                                            <span class="badge badge-lg bg-gray-light text-primary">@rank</span>
                                                 }
                                                 </td>
-                                                <td><strong>@(product.ProductName ?? "")</strong></td>
+                                                <td><a href="#" class="text-primary-link fw-bold">@(product.ProductName ?? "")</a></td>
                                                 <td>
-                                                    <span class="badge bg-primary">@qty units</span>
+                                                    <span class="fw-bold text-primary-accent">@qty units</span>
                                                 </td>
-                                                <td class="text-success"><strong>$@trev.ToString("N2")</strong></td>
+                                                <td><strong class="text-success-accent">$@trev.ToString("N2")</strong></td>
                                             </tr>
                                         rank++;
                                     }
                                     </tbody>
                                 </table>
                             </div>
-
                             <canvas id="topProductsChart" height="100"></canvas>
                     }
                     else
                     {
-                            <p class="text-muted text-center">No sales data available yet.</p>
+                            <p class="text-muted text-center py-3">No sales data available yet.</p>
                     }
                 </div>
             </div>
@@ -239,21 +242,25 @@
 @section Scripts {
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
-            // Orders by Status Chart
+            // Data passed from Razor is raw. Chart.js code remains mostly the same, 
+            // but we ensure colors match the new CSS variables (or use Chart.js defaults for Monochrome).
+
+            // Order Status Chart (Doughnut)
         @if (ordersByStatus.Any())
         {
             <text>
                         const orderStatusData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ordersByStatus));
                         const statusLabels = orderStatusData.map(item => item.Status);
                         const statusCounts = orderStatusData.map(item => item.Count);
+                        // Map CSS Accent Colors to Chart.js
                         const statusColors = statusLabels.map(status => {
                             switch(status) {
-                                case 'Pending': return '#ffc107';
-                                case 'Processing': return '#0d6efd';
-                                case 'Shipped': return '#0dcaf0';
-                                case 'Completed': return '#198754';
-                                case 'Cancelled': return '#6c757d';
-                                default: return '#6c757d';
+                                case 'Pending': return '#FFC107'; // Warning Yellow
+                                case 'Processing': return '#007BFF'; // Primary Blue
+                                case 'Shipped': return '#17A2B8'; // Info Cyan
+                                case 'Completed': return '#28A745'; // Success Green
+                                case 'Cancelled': return '#DC3545'; // Danger Red
+                                default: return '#6c757d'; // Secondary Gray
                             }
                         });
 
@@ -270,14 +277,14 @@
                                 responsive: true,
                                 plugins: {
                                     legend: { position: 'bottom' },
-                                    title: { display: true, text: 'Order Distribution by Status' }
+                                    title: { display: true, text: 'Order Distribution by Status', color: '#333' }
                                 }
                             }
                         });
             </text>
         }
 
-            // Revenue by Month Chart
+            // Revenue by Month Chart (Line)
         @if (revenueByMonth.Any())
         {
             <text>
@@ -296,15 +303,16 @@
                                 datasets: [{
                                     label: 'Revenue ($)',
                                     data: revenueValues,
-                                    borderColor: '#198754',
-                                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                                    borderColor: '#28A745', // Success Green
+                                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
                                     tension: 0.4,
-                                    fill: true
+                                    fill: true,
+                                    yAxisID: 'y'
                                 }, {
                                     label: 'Orders',
                                     data: orderCounts,
-                                    borderColor: '#0d6efd',
-                                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                                    borderColor: '#007BFF', // Primary Blue
+                                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
                                     tension: 0.4,
                                     fill: true,
                                     yAxisID: 'y1'
@@ -313,28 +321,17 @@
                             options: {
                                 responsive: true,
                                 interaction: { mode: 'index', intersect: false },
-                                plugins: { title: { display: true, text: 'Monthly Revenue and Order Trends' } },
+                                plugins: { title: { display: true, text: 'Monthly Revenue and Order Trends', color: '#333' } },
                                 scales: {
-                                    y: {
-                                        type: 'linear',
-                                        display: true,
-                                        position: 'left',
-                                        title: { display: true, text: 'Revenue ($)' }
-                                    },
-                                    y1: {
-                                        type: 'linear',
-                                        display: true,
-                                        position: 'right',
-                                        title: { display: true, text: 'Orders' },
-                                        grid: { drawOnChartArea: false }
-                                    }
+                                    y: { position: 'left', title: { display: true, text: 'Revenue ($)', color: '#333' } },
+                                    y1: { position: 'right', title: { display: true, text: 'Orders', color: '#333' }, grid: { drawOnChartArea: false } }
                                 }
                             }
                         });
             </text>
         }
 
-            // Top Products Chart
+            // Top Products Chart (Bar)
         @if (topProducts.Any())
         {
             <text>
@@ -349,8 +346,8 @@
                                 datasets: [{
                                     label: 'Units Sold',
                                     data: productQuantities,
-                                    // let Chart.js default colors (no hard-coded colors required)
-                                    borderColor: '#0d6efd',
+                                    backgroundColor: '#007BFF', // Primary Blue
+                                    borderColor: '#0056b3',
                                     borderWidth: 1
                                 }]
                             },
@@ -359,10 +356,10 @@
                                 indexAxis: 'y',
                                 plugins: {
                                     legend: { display: false },
-                                    title: { display: true, text: 'Top Selling Products by Units' }
+                                    title: { display: true, text: 'Top Selling Products by Units', color: '#333' }
                                 },
                                 scales: {
-                                    x: { beginAtZero: true, title: { display: true, text: 'Units Sold' } }
+                                    x: { beginAtZero: true, title: { display: true, text: 'Units Sold', color: '#333' } }
                                 }
                             }
                         });

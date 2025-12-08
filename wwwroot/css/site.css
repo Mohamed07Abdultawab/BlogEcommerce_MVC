@@ -1321,3 +1321,457 @@ Access Denied / Error Page Styles
 .text-danger-accent {
     color: var(--color-error-red) !important;
 }
+
+/*
+====================================
+Admin Carts Index Styles
+====================================
+*/
+
+.admin-cart-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+    /* لضمان أن زر 'Clear Cart' يظل في الأسفل */
+    display: flex;
+    flex-direction: column;
+}
+
+    .admin-cart-card .card-body {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .admin-cart-card .card-header {
+        background-color: var(--color-background-dark) !important;
+        color: var(--color-text-dark-bg) !important;
+        border-bottom: 1px solid var(--color-border-light);
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+.cart-preview-list {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--color-border-light) !important;
+}
+
+    .cart-preview-list .list-group-item {
+        background-color: var(--color-background-gray) !important;
+        border: none;
+        border-bottom: 1px dashed var(--color-border-light) !important;
+    }
+
+        .cart-preview-list .list-group-item:last-child {
+            border-bottom: none !important;
+        }
+
+/* Reusing Admin Buttons: */
+/* .btn-primary-accent (Blue for View) */
+/* .btn-danger-custom (Red for Clear) */
+/* .text-success-accent (Green for Value) */
+/* .text-error-accent (Red/Accent for Item Subtotal) */
+
+/*
+====================================
+Admin Dashboard Styles
+====================================
+*/
+
+/* Reusing Accent Colors: */
+/* --color-accent-blue (#007BFF) */
+/* --color-success-green (#28A745) */
+/* --color-error-red (#DC3545) */
+
+/* New Accent Colors for Admin UI */
+.bg-warning-custom {
+    background-color: #FFC107 !important; /* الأصفر الداكن للتحذير */
+    color: #333 !important;
+}
+
+.bg-danger-custom {
+    background-color: var(--color-error-red) !important;
+}
+
+.bg-danger-custom-light {
+    background-color: #f8d7da !important; /* خلفية حمراء فاتحة للـ Alert Header */
+    border: 1px solid var(--color-error-red);
+}
+
+.bg-gray-light {
+    background-color: var(--color-background-gray) !important;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.bg-primary-accent {
+    background-color: var(--color-accent-blue) !important;
+}
+
+.bg-success-accent {
+    background-color: var(--color-success-green) !important;
+}
+
+.btn-warning-custom {
+    background-color: #FFC107;
+    border-color: #FFC107;
+    color: #333;
+}
+
+.btn-info-accent {
+    background-color: #17A2B8 !important; /* لون سماوي للإجراءات الثانوية (مثل Carts) */
+    color: white;
+    font-weight: 600;
+}
+
+.alert-warning-custom-light {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.text-dark-link {
+    color: #333 !important;
+}
+
+.btn-outline-dark-custom {
+    border-color: var(--color-primary-text);
+    color: var(--color-primary-text);
+}
+
+    .btn-outline-dark-custom:hover {
+        background-color: var(--color-primary-text);
+        color: white;
+    }
+/* === Stats Cards === */
+.stat-card {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .stat-card .card-body {
+        padding: 1rem;
+    }
+
+    .stat-card .small-title {
+        opacity: 0.8;
+    }
+
+    .stat-card .card-footer-link {
+        background-color: rgba(0, 0, 0, 0.1);
+        display: block;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        transition: background-color 0.3s;
+    }
+
+        .stat-card .card-footer-link:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+/* === Tables in Dashboard === */
+.dashboard-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+.table-monochrome th {
+    background-color: var(--color-background-gray) !important;
+    color: var(--color-primary-text);
+    font-weight: 600;
+}
+
+.table-monochrome tbody tr:nth-of-type(odd) {
+    background-color: var(--color-background-light);
+}
+
+.table-monochrome tbody tr:nth-of-type(even) {
+    background-color: var(--color-background-gray);
+}
+
+/* === Sidebar === */
+.list-group-monochrome .list-group-item {
+    border-color: var(--color-border-light);
+    background-color: transparent;
+}
+
+.sticky-top-custom {
+    top: 100px; /* لتجنب التداخل مع الـ Fixed Navbar */
+}
+
+/*
+====================================
+Order Details Styles (Admin)
+====================================
+*/
+
+/* Card Styles */
+.order-items-card,
+.order-status-card,
+.order-info-card,
+.order-summary-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+    .order-info-card .card-header,
+    .order-status-card .card-header {
+        /* تم تعريف bg-gray-light مسبقًا */
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+/* Table */
+/* Reusing .table-monochrome and .table-header-monochrome */
+
+/* Status Colors */
+/*
+   bg-warning-custom (Yellow)
+   bg-primary-accent (Blue)
+   bg-info-accent (Cyan/Blue-Info)
+   bg-success-accent (Green)
+   bg-danger-custom (Red)
+*/
+.bg-secondary-monochrome {
+    background-color: var(--color-secondary-text) !important;
+    color: white !important;
+}
+
+/* Text Colors */
+.text-error-accent {
+    /* اللون الأحمر/الوردي للأسعار الإجمالية */
+    color: var(--color-error-red) !important;
+}
+
+/* Form Controls (Status Update) */
+/* Reusing form-select-custom */
+
+/*
+====================================
+Order Management (Index) Styles
+====================================
+*/
+
+/* Card Filter */
+.filter-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+.filter-group .btn {
+    border-radius: 0;
+    margin-right: -1px; /* لدمج الأزرار */
+    font-weight: 500;
+}
+
+    .filter-group .btn:first-child {
+        border-top-left-radius: 6px;
+        border-bottom-left-radius: 6px;
+    }
+
+    .filter-group .btn:last-child {
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
+
+/* Custom Filter Button Styles */
+.btn-outline-dark-custom {
+    color: var(--color-primary-text);
+    border-color: var(--color-border-light);
+}
+
+    .btn-outline-dark-custom:hover,
+    .btn-outline-dark-custom.active-filter {
+        background-color: var(--color-primary-text);
+        color: white;
+    }
+
+/* Outline/Active Colors for Filters */
+.btn-outline-warning-custom {
+    color: #FFC107;
+    border-color: #FFC107;
+}
+
+    .btn-outline-warning-custom:hover,
+    .bg-warning-custom.active-filter {
+        background-color: #FFC107 !important;
+        color: var(--color-background-dark) !important;
+    }
+
+.btn-outline-success-accent {
+    color: var(--color-success-green);
+    border-color: var(--color-success-green);
+}
+
+    .btn-outline-success-accent:hover,
+    .bg-success-accent.active-filter {
+        background-color: var(--color-success-green) !important;
+        color: white !important;
+    }
+
+.btn-outline-danger-custom {
+    color: var(--color-error-red);
+    border-color: var(--color-error-red);
+}
+
+    .btn-outline-danger-custom:hover,
+    .bg-danger-custom.active-filter {
+        background-color: var(--color-error-red) !important;
+        color: white !important;
+    }
+
+.btn-outline-info-accent {
+    color: #17A2B8;
+    border-color: #17A2B8;
+}
+
+    .btn-outline-info-accent:hover,
+    .bg-info-accent.active-filter {
+        background-color: #17A2B8 !important;
+        color: white !important;
+    }
+
+/* Orders Table */
+.orders-table-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+.orders-table {
+    border-collapse: collapse;
+}
+
+/* Reusing .table-monochrome and .table-header-monochrome */
+
+/*
+====================================
+Statistics Page Styles
+====================================
+*/
+
+/* Card and Header Styles (Reused from Dashboard) */
+
+.stat-mini-card {
+    border-radius: 6px;
+    border: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+    .stat-mini-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-mini-card .small-title {
+        opacity: 0.9;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+
+.chart-container-fixed {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+/* Tables (Reused Monochrome Table Styles) */
+.monthly-revenue-table,
+.top-products-table {
+    margin-bottom: 0;
+    border: 1px solid var(--color-border-light);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+    .monthly-revenue-table tfoot .table-total-row {
+        background-color: var(--color-background-gray) !important;
+        border-top: 2px solid var(--color-primary-text) !important;
+    }
+
+/* Badge Styling for Top Products */
+.badge-lg {
+    padding: 0.4em 0.8em;
+    font-size: 0.85rem;
+}
+
+/* Final Total Colors */
+.text-success-accent {
+    color: var(--color-success-green) !important;
+}
+
+.text-error-accent {
+    color: var(--color-error-red) !important;
+}
+
+.text-primary-accent {
+    color: var(--color-accent-blue) !important;
+}
+
+.bg-secondary-monochrome {
+    background-color: var(--color-secondary-text) !important;
+}
+
+/*
+====================================
+Admin User Cart Details Styles
+====================================
+*/
+
+.admin-cart-details-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+    .admin-cart-details-card .card-header {
+        background-color: var(--color-background-gray) !important;
+        border-bottom: 1px solid var(--color-border-light);
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+.cart-item-img-small {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border: 1px solid var(--color-border-light);
+    border-radius: 4px !important;
+}
+
+.quantity-control-admin {
+    width: 120px;
+}
+
+/* Summary Card */
+.order-summary-card {
+    border: 2px solid var(--color-primary-text); /* إطار داكن قوي */
+    border-radius: 8px;
+}
+
+    .order-summary-card .card-header {
+        background-color: var(--color-background-dark) !important;
+    }
+
+.text-error-accent {
+    /* اللون الأحمر للإجمالي */
+    color: var(--color-error-red) !important;
+}
+
+.btn-danger-custom {
+    /* زر الحذف الأحمر */
+    background-color: var(--color-error-red) !important;
+    color: white !important;
+}
+
+.btn-outline-dark-custom {
+    /* زر Monochrome لـ Quantity control */
+    border-color: var(--color-border-light);
+    color: var(--color-primary-text);
+}
+
+.sticky-top-custom-admin {
+    top: 100px;
+}

@@ -2,16 +2,19 @@
     ViewData["Title"] = "All User Carts";
 }
 
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>All User Shopping Carts</h1>
-        <a asp-action="Dashboard" class="btn btn-secondary">← Back to Dashboard</a>
+<div class="container-xl py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3">
+        <h1 class="page-title fw-bold">🧺 All User Shopping Carts</h1>
+        <a asp-action="Dashboard" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
     </div>
 
     @if (TempData["SuccessMessage"] != null)
     {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["SuccessMessage"]
+            <div class="alert alert-success-custom alert-dismissible fade show mb-4" role="alert">
+                <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
     }
@@ -21,73 +24,76 @@
             <div class="row">
             @foreach (var cart in (List<dynamic>)ViewBag.Carts)
             {
-                        <div class="col-md-6 col-lg-4 mb-4">
-                            <div class="card h-100">
-                                <div class="card-header bg-primary text-white">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">🛒 @cart.UserEmail</h5>
-                                    </div>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card admin-cart-card h-100 shadow-sm">
+                            <div class="card-header bg-custom-dark text-white p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0 fw-bold"><i class="fas fa-user-tag me-2"></i> @cart.UserEmail</h5>
                                 </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <p class="mb-2">
-                                            <strong>Total Items:</strong> 
-                                            <span class="badge bg-info">@cart.TotalItems</span>
-                                        </p>
-                                        <p class="mb-2">
-                                            <strong>Total Value:</strong> 
-                                            <span class="text-success fs-5">$@cart.TotalValue.ToString("N2")</span>
-                                        </p>
-                                    </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="mb-4">
+                                    <p class="mb-2">
+                                        <strong>Total Items:</strong> 
+                                        <span class="badge rounded-pill bg-gray-light text-primary ms-2 fs-6">@cart.TotalItems</span>
+                                    </p>
+                                    <p class="mb-0">
+                                        <strong>Estimated Value:</strong> 
+                                        <span class="text-success-accent fs-5 fw-bold ms-2">$@cart.TotalValue.ToString("N2")</span>
+                                    </p>
+                                </div>
 
-                                    <div class="list-group mb-3">
+                                <hr class="section-divider-light">
+
+                                <h6 class="fw-bold mt-3 mb-3 text-secondary">Items Preview:</h6>
+
+                                <div class="list-group cart-preview-list mb-4">
                                 @foreach (var item in (List<BlogEcommerce.Models.CartItem>)cart.Items)
                                 {
-                                                <div class="list-group-item">
-                                                    <div class="d-flex justify-content-between">
-                                                        <div>
-                                                            <h6 class="mb-1">@item.Product?.Name</h6>
-                                                            <small class="text-muted">Qty: @item.Quantity × $@item.Product?.Price.ToString("N2")</small>
-                                                        </div>
-                                                        <strong class="text-primary">$@((item.Quantity * item.Product!.Price).ToString("N2"))</strong>
-                                                    </div>
-                                                </div>
+                                        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center small">
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-primary-text">@item.Product?.Name</h6>
+                                                <small class="text-muted">Qty: @item.Quantity</small>
+                                            </div>
+                                            <strong class="text-error-accent">$@((item.Quantity * item.Product!.Price).ToString("N2"))</strong>
+                                        </div>
                                 }
-                                    </div>
+                                </div>
 
-                                    <div class="d-grid gap-2">
-                                        <a asp-action="UserCart" asp-route-userId="@cart.UserId" class="btn btn-primary">
-                                            View Full Cart
-                                        </a>
-                                        <button type="button" class="btn btn-danger" onclick="clearCart('@cart.UserId', '@cart.UserEmail')">
-                                            Clear Cart
-                                        </button>
-                                    </div>
+                                <div class="d-grid gap-2 mt-auto">
+                                    <a asp-action="UserCart" asp-route-userId="@cart.UserId" class="btn btn-primary-accent">
+                                        <i class="fas fa-eye me-2"></i> View Full Cart
+                                    </a>
+                                    <button type="button" class="btn btn-danger-custom" onclick="clearCart('@cart.UserId', '@cart.UserEmail')">
+                                        <i class="fas fa-trash-alt me-2"></i> Clear Cart
+                                    </button>
                                 </div>
                             </div>
                         </div>
+                    </div>
             }
             </div>
     }
     else
     {
-            <div class="alert alert-info text-center">
-                <h4>No Active Carts</h4>
-                <p>There are currently no items in any user's cart.</p>
+            <div class="alert alert-info-custom text-center py-5 my-5">
+                <h4 class="fw-bold text-primary-text mb-3">No Active Carts Found</h4>
+                <p class="fs-5 text-secondary">There are currently no items in any user's cart.</p>
             </div>
     }
 </div>
 
-<!-- Clear Cart Confirmation Modal -->
 <form id="clearCartForm" asp-action="ClearUserCart" method="post" style="display: none;">
+    @Html.AntiForgeryToken()
     <input type="hidden" name="userId" id="clearCartUserId" />
 </form>
 
 @section Scripts {
         <script>
             function clearCart(userId, userEmail) {
-                if (confirm(`Are you sure you want to clear all items from ${userEmail}'s cart?`)) {
+                if (confirm(`Are you sure you want to clear all items from ${userEmail}'s cart? This action cannot be undone.`)) {
                     document.getElementById('clearCartUserId').value = userId;
+                    // يجب التأكد من وجود Anti-Forgery Token في الفورم
                     document.getElementById('clearCartForm').submit();
                 }
             }
