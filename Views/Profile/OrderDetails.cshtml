@@ -2,99 +2,125 @@
 
 @{
     ViewData["Title"] = $"Order #{Model.Id}";
+    // دالة مساعدة للحصول على لون Badge بناءً على الحالة (User View)
+    string GetStatusClass(string status) => status switch
+    {
+        "Pending" => "bg-warning-custom text-dark",
+        "Processing" => "bg-primary-accent",
+        "Shipped" => "bg-info-accent",
+        "Completed" => "bg-success-accent",
+        "Cancelled" => "bg-danger-custom",
+        _ => "bg-secondary-monochrome"
+    };
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Order #@Model.Id</h1>
-        <a asp-action="Orders" class="btn btn-secondary">← Back to Orders</a>
+<div class="container-xl py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3">
+        <h1 class="page-title fw-bold">Order <span class="text-primary-accent">#@Model.Id</span></h1>
+        <a asp-action="Orders" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i> Back to Orders
+        </a>
     </div>
 
-    <div class="row">
-        <!-- Order Items -->
-        <div class="col-md-8">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Order Items</h5>
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+            <div class="card order-items-card shadow-sm mb-4">
+                <div class="card-header bg-gray-light">
+                    <h5 class="mb-0 fw-bold text-primary-text"><i class="fas fa-list-alt me-2"></i> Order Items</h5>
                 </div>
-                <div class="card-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.OrderItems)
-                            {
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                            @if (!string.IsNullOrEmpty(item.Product?.ImageUrl))
-                                            {
-                                                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" style="width: 60px; height: 60px; object-fit: cover;" class="me-3 rounded">
-                                            }
-                                                <div>
-                                                    <strong>@item.Product?.Name</strong><br>
-                                                    <small class="text-muted">@item.Product?.Category</small>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-monochrome table-details mb-0">
+                            <thead>
+                                <tr class="table-header-monochrome">
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                @if (!string.IsNullOrEmpty(item.Product?.ImageUrl))
+                                                {
+                                                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="cart-item-img-small me-3">
+                                                }
+                                                    <div>
+                                                        <strong class="text-primary-link">@item.Product?.Name</strong><br>
+                                                        <small class="text-secondary">@item.Product?.Category</small>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>$@item.Price.ToString("N2")</td>
-                                        <td>@item.Quantity</td>
-                                        <td><strong>$@((item.Price * item.Quantity).ToString("N2"))</strong></td>
-                                    </tr>
-                            }
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                <td><strong class="text-primary fs-5">$@Model.TotalAmount.ToString("N2")</strong></td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                                            </td>
+                                            <td>$@item.Price.ToString("N2")</td>
+                                            <td>@item.Quantity</td>
+                                            <td><strong class="text-error-accent">$@((item.Price * item.Quantity).ToString("N2"))</strong></td>
+                                        </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-footer-monochrome">
+                                    <td colspan="3" class="text-end fw-bold">Grand Total:</td>
+                                    <td><strong class="text-error-accent fs-5">$@Model.TotalAmount.ToString("N2")</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
+            </div>
+
+            <div class="text-center mt-3 p-3 bg-gray-light rounded">
+                <p class="mb-0 text-secondary-text">Need assistance with this order? <a href="#" class="text-accent-blue fw-bold">Contact Customer Support</a></p>
             </div>
         </div>
 
-        <!-- Order Information -->
-        <div class="col-md-4">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h6 class="mb-0">Order Status</h6>
-                </div>
-                <div class="card-body">
-                    <p><strong>Status:</strong></p>
-                    <span class="badge bg-@(Model.Status == "Pending" ? "warning" : Model.Status == "Completed" ? "success" : Model.Status == "Shipped" ? "info" : Model.Status == "Processing" ? "primary" : "secondary") fs-6">
-                        @Model.Status
-                    </span>
-                    <p class="mt-3"><strong>Order Date:</strong><br>@Model.OrderDate.ToString("MMMM dd, yyyy HH:mm")</p>
-                </div>
-            </div>
+        <div class="col-lg-4">
 
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h6 class="mb-0">Shipping Address</h6>
+            <div class="card order-status-card shadow-sm mb-4">
+                <div class="card-header bg-custom-dark text-white">
+                    <h6 class="mb-0 fw-bold"><i class="fas fa-history me-2"></i> Order Status</h6>
                 </div>
                 <div class="card-body">
+                    <p class="mb-3">
+                        <strong class="small">Current Status:</strong><br />
+                        <span class="badge rounded-pill @GetStatusClass(Model.Status) fs-6 text-white p-2">
+                            @Model.Status
+                        </span>
+                    </p>
                     <p class="mb-0">
-                        @Model.CustomerName<br>
-                        @Model.Address<br>
-                        @Model.City, @Model.ZipCode
+                        <strong class="small">Order Date:</strong><br />
+                        @Model.OrderDate.ToString("MMMM dd, yyyy HH:mm")
                     </p>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h6 class="mb-0">Contact</h6>
+            <div class="card order-info-card shadow-sm mb-4">
+                <div class="card-header bg-gray-light">
+                    <h6 class="mb-0 fw-bold text-primary-text"><i class="fas fa-truck me-2"></i> Shipping Address</h6>
                 </div>
                 <div class="card-body">
-                    <p class="mb-1"><strong>Email:</strong><br>@Model.Email</p>
-                    <p class="mb-0"><strong>Phone:</strong><br>@Model.Phone</p>
+                    <p class="fw-bold mb-1 text-primary-text">@Model.CustomerName</p>
+                    <address class="mb-0 text-secondary-text">
+                        @Model.Address<br />
+                        @Model.City, @Model.ZipCode
+                    </address>
+                </div>
+            </div>
+
+            <div class="card order-info-card shadow-sm">
+                <div class="card-header bg-gray-light">
+                    <h6 class="mb-0 fw-bold text-primary-text"><i class="fas fa-envelope me-2"></i> Contact & Payment</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Email:</strong><br /><a href="mailto:@Model.Email" class="text-primary-link">@Model.Email</a></p>
+                    <p class="mb-2"><strong>Phone:</strong><br />@Model.Phone</p>
+                    <hr class="section-divider-light" />
+                    <p class="mb-0"><strong>Payment:</strong><br />Cash on Delivery (Assumed)</p>
                 </div>
             </div>
         </div>

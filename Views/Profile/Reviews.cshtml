@@ -4,61 +4,67 @@
     ViewData["Title"] = "My Reviews";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>My Reviews</h1>
-        <a asp-action="Index" class="btn btn-secondary">← Back to Profile</a>
+<div class="container-xl py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3">
+        <h1 class="page-title fw-bold"><i class="fas fa-star me-2"></i> My Product Reviews</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i> Back to Profile
+        </a>
     </div>
 
     @if (Model.Any())
     {
-            <div class="row">
-            @foreach (var review in Model)
+            <div class="row g-4">
+            @foreach (var review in Model.OrderByDescending(r => r.ReviewDate))
             {
-                        <div class="col-md-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start mb-3">
+                    <div class="col-md-6">
+                        <div class="card user-review-card shadow-sm h-100">
+                            <div class="card-body p-4">
+
+                                <div class="d-flex align-items-start mb-3 border-bottom pb-3">
                                 @if (!string.IsNullOrEmpty(review.Product?.ImageUrl))
                                 {
-                                                <img src="@review.Product.ImageUrl" alt="@review.Product.Name" style="width: 80px; height: 80px; object-fit: cover;" class="me-3 rounded">
+                                            <img src="@review.Product.ImageUrl" alt="@review.Product.Name" class="review-product-img me-3 rounded">
                                 }
-                                        <div>
-                                            <h6 class="mb-1">@review.Product?.Name</h6>
-                                            <div class="mb-2">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-primary-text">@review.Product?.Name</h6>
+
+                                        <div class="mb-2">
                                         @for (int i = 1; i <= 5; i++)
                                         {
-                                            if (i <= review.Rating)
-                                            {
-                                                                <span class="text-warning">★</span>
-                                            }
-                                            else
-                                            {
-                                                                <span class="text-muted">★</span>
-                                            }
+                                                <span class="star-icon @(i <= review.Rating ? "text-warning-accent" : "text-muted-star")">★</span>
                                         }
-                                            </div>
-                                            <small class="text-muted">@review.ReviewDate.ToString("MMM dd, yyyy")</small>
                                         </div>
+                                        <small class="text-muted"><i class="far fa-calendar-alt me-1"></i> Reviewed on @review.ReviewDate.ToString("MMM dd, yyyy")</small>
                                     </div>
-                                    <p class="card-text">@review.Comment</p>
-                                    <div class="d-flex gap-2">
-                                        <a asp-controller="Products" asp-action="Details" asp-route-id="@review.ProductId" class="btn btn-sm btn-outline-primary">
-                                            View Product
-                                        </a>
-                                    </div>
+                                </div>
+
+                                <p class="card-text text-secondary-text review-content-text">@review.Comment</p>
+
+                                <div class="d-flex gap-2 mt-3">
+                                    <a asp-controller="Products" asp-action="Details" asp-route-id="@review.ProductId" class="btn btn-sm btn-primary-accent">
+                                        <i class="fas fa-info-circle me-1"></i> View Product
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-dark-custom" disabled>
+                                        <i class="fas fa-edit me-1"></i> Edit Review
+                                    </button>
                                 </div>
                             </div>
                         </div>
+                    </div>
             }
             </div>
     }
     else
     {
-            <div class="alert alert-info text-center">
-                <h4>No Reviews Yet</h4>
-                <p>You haven't written any product reviews yet.</p>
-                <a asp-controller="Products" asp-action="Index" class="btn btn-primary">Browse Products</a>
+            <div class="alert alert-info-custom text-center py-5 my-5">
+                <i class="fas fa-star-half-alt fa-4x text-secondary-text mb-4"></i>
+                <h4 class="fw-bold text-primary-text">No Reviews Yet</h4>
+                <p class="text-secondary fs-5 mb-4">You haven't written any product reviews yet. Share your experience!</p>
+                <a asp-controller="Products" asp-action="Index" class="btn btn-primary-accent btn-lg">
+                    <i class="fas fa-store me-2"></i> Browse Products
+                </a>
             </div>
     }
 </div>

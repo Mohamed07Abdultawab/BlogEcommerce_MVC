@@ -3,126 +3,122 @@
 
 @{
     ViewData["Title"] = "My Orders";
+
+    // دالة مساعدة للحصول على لون Badge بناءً على الحالة
+    string GetStatusClass(string status) => status switch
+    {
+        "Pending" => "bg-warning-custom text-dark",
+        "Completed" => "bg-success-accent",
+        "Shipped" => "bg-info-accent",
+        "Processing" => "bg-primary-accent",
+        "Cancelled" => "bg-danger-custom",
+        _ => "bg-secondary-monochrome"
+    };
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h4 mb-0">My Orders</h1>
-        <a asp-action="Index" class="btn btn-outline-secondary">← Back to Profile</a>
+<div class="container-xl py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3">
+        <h1 class="page-title fw-bold"><i class="fas fa-box me-2"></i> My Order History</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i> Back to Profile
+        </a>
     </div>
 
     @if (Model != null && Model.Any())
     {
-            <div class="row">
-            @foreach (var order in Model)
+            <div class="row g-4">
+            @foreach (var order in Model.OrderByDescending(o => o.OrderDate))
             {
-                var badgeClass = order.Status switch
-                {
-                    "Pending" => "warning",
-                    "Completed" => "success",
-                    "Shipped" => "info",
-                    "Processing" => "primary",
-                    "Cancelled" => "danger",
-                    _ => "secondary"
-                };
+                    <div class="col-12">
+                        <div class="card order-history-card shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="row align-items-center">
 
-                        <div class="col-12 mb-3">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-7">
-                                            <h5 class="mb-1">Order #@order.Id</h5>
-                                            <div class="text-muted small mb-2">
-                                                Placed on @order.OrderDate.ToString("MMMM dd, yyyy HH:mm")
-                                            </div>
+                                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0 border-end border-light-gray-lg">
+                                        <h5 class="mb-1 fw-bold text-primary-text">Order <span class="text-primary-accent">#@order.Id</span></h5>
 
-                                            <div class="mb-2">
-                                                <span class="badge bg-@badgeClass">@order.Status</span>
-                                            </div>
-
-                                            <div class="small">
-                                                <strong>Items:</strong> @(order.OrderItems?.Sum(i => i.Quantity) ?? 0)
-                                                &nbsp;|&nbsp;
-                                                <strong>Total:</strong> $@order.TotalAmount.ToString("N2")
-                                            </div>
-
-                                            <div class="text-muted small mt-2">
-                                                <strong>Shipping:</strong>
-                                        @($"{order.Address}, {order.City} {order.ZipCode}")
-                                            </div>
+                                        <div class="text-muted small mb-2">
+                                            <i class="far fa-calendar-alt me-1"></i> Placed on @order.OrderDate.ToString("MMM dd, yyyy HH:mm")
                                         </div>
 
-                                        <div class="col-md-5 text-md-end mt-3 mt-md-0">
-                                            <a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-primary btn-sm me-2">
+                                        <div class="mb-2">
+                                            <span class="badge rounded-pill @GetStatusClass(order.Status) text-white p-2">@order.Status</span>
+                                        </div>
+
+                                        <div class="small mt-3">
+                                            <strong class="me-2">Items:</strong> @(order.OrderItems?.Sum(i => i.Quantity) ?? 0)
+                                            &nbsp;|&nbsp;
+                                            <strong class="me-2">Total:</strong> <span class="text-error-accent fw-bold">$@order.TotalAmount.ToString("N2")</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-5 col-md-12 text-md-end text-lg-start pt-3 pt-lg-0">
+
+                                        <div class="text-muted small mb-3">
+                                            <i class="fas fa-truck me-1"></i> Shipping to:
+                                            <span class="fw-bold">@order.City, @order.ZipCode</span>
+                                        </div>
+
+                                        <div class="d-flex gap-2 justify-content-end justify-content-lg-start">
+                                            <a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-primary-accent btn-sm">
                                                 View Details
                                             </a>
 
-                                    @if (string.Equals(order.Status, "Completed", StringComparison.OrdinalIgnoreCase))
-                                    {
+                                        @if (string.Equals(order.Status, "Completed", StringComparison.OrdinalIgnoreCase))
+                                        {
                                                     <form asp-action="Reorder" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
                                                         <input type="hidden" name="orderId" value="@order.Id" />
-                                                        <button type="submit" class="btn btn-outline-secondary btn-sm">Reorder</button>
+                                                        <button type="submit" class="btn btn-outline-secondary btn-sm" onclick="return confirm('Reorder items?');">
+                                                            Reorder
+                                                        </button>
                                                     </form>
-                                    }
+                                        }
                                         </div>
                                     </div>
+                                </div>
 
-                                    <hr />
-
-                                    <div class="row">
-                                @if (order.OrderItems != null && order.OrderItems.Any())
-                                {
-                                    var preview = order.OrderItems.Take(3).ToList();
-                                    foreach (var item in preview)
+                            @if (order.OrderItems != null && order.OrderItems.Any())
+                            {
+                                        <div class="row order-items-preview mt-4 pt-3 border-top section-divider-light">
+                                    @foreach (var item in order.OrderItems.Take(3))
                                     {
-                                                        <div class="col-12 col-md-4 mb-2">
-                                                            <div class="d-flex align-items-center">
-                                                @* Product image is optional — show when available *@
+                                                <div class="col-12 col-md-4 mb-2">
+                                                    <div class="d-flex align-items-center">
                                                 @if (item?.Product != null && !string.IsNullOrEmpty(item.Product.ImageUrl))
                                                 {
-                                                                        <img src="@item.Product.ImageUrl" alt="@item.Product.Name" style="width:56px; height:56px; object-fit:cover;" class="me-2 rounded" />
+                                                            <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="item-preview-img me-2 rounded" />
                                                 }
-                                                else
-                                                {
-                                                                        <div class="me-2 rounded" style="width:56px; height:56px; background:#f1f1f1; display:flex; align-items:center; justify-content:center;">
-                                                                            <small class="text-muted">No image</small>
-                                                                        </div>
-                                                }
-
-                                                                <div class="small">
-                                                                    <div class="fw-semibold">@item.Product?.Name ?? "Unknown product"</div>
-                                                                    <div class="text-muted">Qty: @item.Quantity</div>
-                                                                </div>
-                                                            </div>
+                                                        <div class="small">
+                                                            <div class="fw-semibold text-primary-text">@item.Product?.Name ?? "Unknown product"</div>
+                                                            <div class="text-muted">x@item.Quantity</div>
                                                         </div>
+                                                    </div>
+                                                </div>
                                     }
-
                                     @if (order.OrderItems.Count() > 3)
                                     {
-                                                        <div class="col-12 col-md-4 d-flex align-items-center">
-                                                            <small class="text-muted">+@(order.OrderItems.Count() - 3) more item(s)</small>
-                                                        </div>
-                                    }
-                                }
-                                else
-                                {
-                                                <div class="col-12">
-                                                    <small class="text-muted">No items in this order.</small>
+                                                <div class="col-12 col-md-4 d-flex align-items-center">
+                                                    <small class="text-secondary fw-bold">+@(order.OrderItems.Count() - 3) more items</small>
                                                 </div>
-                                }
-                                    </div>
-                                </div> <!-- /.card-body -->
-                            </div> <!-- /.card -->
-                        </div> <!-- /.col -->
+                                    }
+                                        </div>
+                            }
+
+                            </div> </div> </div>
             }
-            </div> <!-- /.row -->
+            </div>
     }
     else
     {
-            <div class="alert alert-info text-center">
-                <h5 class="mb-1">No Orders Yet</h5>
-                <p class="mb-3">You haven't placed any orders yet.</p>
-                <a asp-controller="Products" asp-action="Index" class="btn btn-primary">Start Shopping</a>
+            <div class="alert alert-info-custom text-center py-5 my-5">
+                <i class="fas fa-box-open fa-4x text-secondary-text mb-4"></i>
+                <h4 class="fw-bold text-primary-text">No Orders Yet</h4>
+                <p class="text-secondary fs-5 mb-4">You haven't placed any orders yet. Let's find something great!</p>
+                <a asp-controller="Products" asp-action="Index" class="btn btn-primary-accent btn-lg">
+                    <i class="fas fa-store me-2"></i> Start Shopping
+                </a>
             </div>
     }
 </div>
@@ -130,10 +126,10 @@
 @section Scripts {
         <script>
             (function () {
-                // Optional: confirm before calling Reorder (if action exists)
+                // Optional: confirm before calling Reorder
                 document.querySelectorAll('form[action$="Reorder"]').forEach(function (f) {
                     f.addEventListener('submit', function (e) {
-                        if (!confirm('Are you sure you want to reorder these items?')) {
+                        if (!confirm('Are you sure you want to reorder these items? This will add them to your current cart.')) {
                             e.preventDefault();
                         }
                     });

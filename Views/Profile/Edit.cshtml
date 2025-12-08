@@ -4,91 +4,102 @@
     ViewData["Title"] = "Edit Profile";
 }
 
-<div class="container mt-4">
+<div class="container-xl py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="mb-0">Edit Profile</h4>
+        <div class="col-lg-8">
+
+            <div class="card profile-edit-card shadow-lg">
+                <div class="card-header bg-gray-light">
+                    <h4 class="mb-0 fw-bold text-primary-text">
+                        <i class="fas fa-user-edit me-2"></i> Edit Profile
+                    </h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4 p-md-5">
                     <form asp-action="Edit" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger-custom text-danger-accent mb-4 p-2 small"></div>
+
+                        <h5 class="fw-bold mb-3 text-primary-text border-bottom pb-2">Personal Information</h5>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="FullName" class="form-label"></label>
-                                <input asp-for="FullName" class="form-control" />
-                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="FullName" class="form-label fw-bold small">Full Name</label>
+                                <input asp-for="FullName" class="form-control form-control-custom" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
                             </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Email" class="form-label"></label>
-                                <input asp-for="Email" class="form-control" readonly />
-                                <small class="text-muted">Email cannot be changed</small>
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Email" class="form-label fw-bold small">Email (Username)</label>
+                                <input asp-for="Email" class="form-control form-control-custom" readonly />
+                                <small class="text-muted">Email cannot be changed.</small>
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="PhoneNumber" class="form-label"></label>
-                                <input asp-for="PhoneNumber" class="form-control" />
-                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="DateOfBirth" class="form-label"></label>
-                                <input asp-for="DateOfBirth" class="form-control" type="date" />
-                                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="ProfilePictureUrl" class="form-label"></label>
-                            <input asp-for="ProfilePictureUrl" class="form-control" placeholder="https://example.com/image.jpg" />
-                            <span asp-validation-for="ProfilePictureUrl" class="text-danger"></span>
-                            <small class="text-muted">Enter a URL to your profile picture</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Bio" class="form-label"></label>
-                            <textarea asp-for="Bio" class="form-control" rows="4" maxlength="500"></textarea>
-                            <span asp-validation-for="Bio" class="text-danger"></span>
-                            <small class="text-muted">Maximum 500 characters</small>
-                        </div>
-
-                        <hr class="my-4">
-                        <h5>Address Information</h5>
-
-                        <div class="mb-3">
-                            <label asp-for="Address" class="form-label"></label>
-                            <input asp-for="Address" class="form-control" />
-                            <span asp-validation-for="Address" class="text-danger"></span>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="City" class="form-label"></label>
-                                <input asp-for="City" class="form-control" />
-                                <span asp-validation-for="City" class="text-danger"></span>
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="PhoneNumber" class="form-label fw-bold small">Phone Number</label>
+                                <input asp-for="PhoneNumber" class="form-control form-control-custom" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                             </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="ZipCode" class="form-label"></label>
-                                <input asp-for="ZipCode" class="form-control" />
-                                <span asp-validation-for="ZipCode" class="text-danger"></span>
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="DateOfBirth" class="form-label fw-bold small">Date of Birth</label>
+                                <input asp-for="DateOfBirth" class="form-control form-control-custom" type="date" />
+                                <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Country" class="form-label"></label>
-                            <input asp-for="Country" class="form-control" />
-                            <span asp-validation-for="Country" class="text-danger"></span>
+                        <div class="mb-4">
+                            <label asp-for="ProfilePictureUrl" class="form-label fw-bold small">Profile Picture URL</label>
+                            <input asp-for="ProfilePictureUrl" class="form-control form-control-custom" placeholder="https://example.com/image.jpg" />
+                            <span asp-validation-for="ProfilePictureUrl" class="text-danger small"></span>
+                            <small class="text-muted">Enter a URL to your profile picture.</small>
                         </div>
 
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <div class="mb-5">
+                            <label asp-for="Bio" class="form-label fw-bold small">Bio</label>
+                            <textarea asp-for="Bio" class="form-control form-control-custom" rows="4" maxlength="500"></textarea>
+                            <span asp-validation-for="Bio" class="text-danger small"></span>
+                            <small class="text-muted">Maximum 500 characters.</small>
+                        </div>
+
+                        <hr class="my-4 section-divider">
+
+                        <h5 class="fw-bold mb-3 text-primary-text border-bottom pb-2">Address Information</h5>
+
+                        <div class="mb-4">
+                            <label asp-for="Address" class="form-label fw-bold small">Street Address</label>
+                            <input asp-for="Address" class="form-control form-control-custom" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="City" class="form-label fw-bold small">City</label>
+                                <input asp-for="City" class="form-control form-control-custom" />
+                                <span asp-validation-for="City" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="ZipCode" class="form-label fw-bold small">Zip Code</label>
+                                <input asp-for="ZipCode" class="form-control form-control-custom" />
+                                <span asp-validation-for="ZipCode" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label asp-for="Country" class="form-label fw-bold small">Country</label>
+                            <input asp-for="Country" class="form-control form-control-custom" />
+                            <span asp-validation-for="Country" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary-accent btn-lg">
+                                <i class="fas fa-save me-2"></i> Save Changes
+                            </button>
                         </div>
                     </form>
                 </div>

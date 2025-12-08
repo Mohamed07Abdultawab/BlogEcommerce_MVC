@@ -1,48 +1,59 @@
-﻿@{
+﻿@* User Profile: Delete Account *@
+@{
     ViewData["Title"] = "Delete Account";
 }
 
-<div class="container mt-4">
+<div class="container-xl py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-danger">
-                <div class="card-header bg-danger text-white">
-                    <h4 class="mb-0">⚠️ Delete Account</h4>
+        <div class="col-lg-6 col-md-8">
+
+            <div class="card delete-account-card shadow-lg">
+                <div class="card-header bg-danger-custom text-white">
+                    <h4 class="mb-0 fw-bold">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Delete Account Permanently
+                    </h4>
                 </div>
-                <div class="card-body">
+
+                <div class="card-body p-4">
                     @if (TempData["ErrorMessage"] != null)
                     {
-                            <div class="alert alert-danger">
-                            @TempData["ErrorMessage"]
+                            <div class="alert alert-danger-custom mb-4">
+                                <i class="fas fa-times-circle me-2"></i> @TempData["ErrorMessage"]
                             </div>
                     }
 
-                    <div class="alert alert-warning">
-                        <strong>Warning!</strong> This action cannot be undone.
+                    <div class="alert alert-warning-custom-light mb-4">
+                        <h5 class="mb-2 fw-bold text-dark-link">Warning! This action cannot be undone.</h5>
+                        <p class="mb-0 small">Please read carefully before proceeding.</p>
                     </div>
 
-                    <p>Deleting your account will permanently remove:</p>
-                    <ul>
-                        <li>Your profile information</li>
-                        <li>All your reviews</li>
-                        <li>All your comments</li>
-                        <li>Your cart items</li>
-                        <li>Access to your order history</li>
+                    <p class="fw-bold text-primary-text">Deleting your account will permanently remove all associated data, including:</p>
+                    <ul class="list-unstyled text-secondary-text delete-list mb-4">
+                        <li><i class="fas fa-times text-danger-accent me-2"></i> Your profile information and details</li>
+                        <li><i class="fas fa-times text-danger-accent me-2"></i> All product reviews you have written</li>
+                        <li><i class="fas fa-times text-danger-accent me-2"></i> All blog comments you have posted</li>
+                        <li><i class="fas fa-times text-danger-accent me-2"></i> Your saved cart items</li>
+                        <li><i class="fas fa-times text-danger-accent me-2"></i> Your access to order history records</li>
                     </ul>
 
-                    <p class="text-danger"><strong>Your orders will remain in the system for record-keeping purposes.</strong></p>
+                    <p class="text-danger-accent fw-bold fs-6 border-top pt-3">
+                        NOTE: Your past orders will remain in the system for administrative and record-keeping purposes only.
+                    </p>
 
                     <form asp-action="DeleteAccountConfirmed" method="post">
-                        <div class="mb-3">
-                            <label for="password" class="form-label"><strong>Enter your password to confirm:</strong></label>
-                            <input type="password" name="password" id="password" class="form-control" required />
+                        @Html.AntiForgeryToken()
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-bold">Enter your password to confirm:</label>
+                            <input type="password" name="password" id="password" class="form-control form-control-custom" required />
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you absolutely sure? This cannot be undone!');">
-                                Yes, Delete My Account Permanently
+                            <button type="submit" class="btn btn-danger-custom btn-lg delete-btn" onclick="return confirm('ARE YOU ABSOLUTELY SURE? All data will be permanently deleted!');">
+                                <i class="fas fa-trash-alt me-2"></i> Yes, Delete My Account Permanently
                             </button>
-                            <a asp-action="Settings" class="btn btn-outline-secondary">Cancel</a>
+                            <a asp-action="Settings" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </a>
                         </div>
                     </form>
                 </div>

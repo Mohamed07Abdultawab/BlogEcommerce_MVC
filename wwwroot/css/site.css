@@ -3,6 +3,8 @@
 CSS Variables (Colors: Monochrome + Accent)
 ====================================
 */
+@import url('site.css');
+@import url('site.css');
 :root {
     /* Monochrome & Gray Tones (Approx 80%) */
     --color-background-light: #FFFFFF; /* الأبيض الرئيسي */
@@ -1775,3 +1777,366 @@ Admin User Cart Details Styles
 .sticky-top-custom-admin {
     top: 100px;
 }
+
+/*
+====================================
+User Comments Page Styles
+====================================
+*/
+
+.comment-user-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+    transition: box-shadow 0.3s;
+}
+
+    .comment-user-card:hover {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+.comment-content-preview {
+    border-top: 1px solid var(--color-border-light);
+}
+
+.text-primary-link {
+    /* رابط العنوان الأسود */
+    color: var(--color-primary-text);
+    font-weight: 600;
+}
+
+    .text-primary-link:hover {
+        color: var(--color-accent-blue);
+    }
+/*
+====================================
+Delete Account Styles
+====================================
+*/
+
+.delete-account-card {
+    /* إطار أحمر لزيادة التحذير */
+    border: 2px solid var(--color-error-red);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+    .delete-account-card .card-header {
+        background-color: var(--color-error-red) !important;
+        color: white;
+    }
+
+/* Reusing Danger Accent and custom warning alert */
+.text-danger-accent {
+    color: var(--color-error-red) !important;
+}
+
+.alert-warning-custom-light {
+    /* Custom style for primary warning text */
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+    font-size: 1.05rem;
+}
+
+.text-dark-link {
+    color: var(--color-primary-text) !important;
+}
+
+.delete-list li {
+    margin-bottom: 5px;
+}
+
+.delete-btn {
+    font-weight: 700;
+}
+
+/*
+====================================
+User Profile Edit Styles
+====================================
+*/
+
+.profile-edit-card {
+    /* Reusing Admin/Auth card styles for consistency */
+    border: 1px solid var(--color-border-light);
+    border-radius: 12px;
+    background-color: var(--color-background-light);
+}
+
+    .profile-edit-card .card-header {
+        background-color: var(--color-background-gray) !important;
+    }
+
+    .profile-edit-card .section-divider {
+        border-top: 1px solid var(--color-border-light);
+    }
+
+/*
+====================================
+User Profile Styles (Index)
+====================================
+*/
+
+/* Sidebar Card */
+.profile-sidebar-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+.profile-avatar-wrapper {
+    width: 150px;
+    height: 150px;
+}
+
+.profile-picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 3px solid var(--color-border-light); /* إطار خفيف */
+}
+
+.profile-initials-bg {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-background-dark) !important;
+}
+
+.profile-initials-text {
+    font-size: 60px;
+    line-height: 1;
+}
+
+/* Stats Cards (Reusing Admin Styles) */
+.stat-card-profile {
+    border-radius: 6px;
+    border: none;
+    transition: transform 0.3s;
+}
+
+    .stat-card-profile:hover {
+        transform: translateY(-3px);
+    }
+
+    .stat-card-profile .small-title {
+        opacity: 0.8;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+
+.bg-warning-custom { /* Yellow */
+    background-color: var(--color-warning-yellow) !important;
+    color: #333 !important;
+}
+
+.bg-info-accent { /* Cyan */
+    background-color: var(--color-info-cyan) !important;
+    color: white !important;
+}
+
+.bg-success-accent { /* Green */
+    background-color: var(--color-success-green) !important;
+    color: white !important;
+}
+
+.bg-primary-accent { /* Blue */
+    background-color: var(--color-accent-blue) !important;
+    color: white !important;
+}
+
+/* Content Cards */
+.profile-info-card, .recent-activity-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+    .profile-info-card .card-header {
+        background-color: var(--color-background-gray) !important;
+    }
+
+.text-primary-text {
+    font-weight: 600;
+}
+
+/* Activity Links (Monochrome Outline Links) */
+.btn-outline-dark-custom {
+    color: var(--color-primary-text) !important;
+    border: 1px solid var(--color-border-light) !important;
+}
+
+    .btn-outline-dark-custom:hover {
+        background-color: var(--color-background-gray) !important;
+    }
+
+.btn-outline-primary-accent {
+    color: var(--color-accent-blue) !important;
+    border: 1px solid var(--color-accent-blue) !important;
+}
+
+    .btn-outline-primary-accent:hover {
+        background-color: var(--color-accent-blue) !important;
+        color: white !important;
+    }
+/* Reusing colors for text inside links */
+/* .text-error-accent, .text-warning-accent, .text-info-accent */
+
+/*
+====================================
+Order Details Styles (User View)
+====================================
+*/
+
+/* Reusing general card and table styles */
+
+.order-items-card {
+    /* Main card style: Monochrome */
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+    .order-items-card .card-header,
+    .order-info-card .card-header {
+        background-color: var(--color-background-gray) !important;
+        border-bottom: 1px solid var(--color-border-light);
+    }
+
+.order-status-card {
+    /* Card for status - dark header for contrast */
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+    .order-status-card .card-header.bg-custom-dark {
+        background-color: var(--color-background-dark) !important;
+        color: var(--color-text-dark-bg);
+    }
+
+.cart-item-img-small {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border: 1px solid var(--color-border-light);
+    border-radius: 4px !important;
+}
+
+/* Status Badges (Reused from Admin/Orders) */
+/*
+    .bg-warning-custom, .bg-primary-accent, .bg-info-accent, .bg-success-accent, .bg-danger-custom
+*/
+
+/* Total Amount (Red Accent) */
+.text-error-accent {
+    color: var(--color-error-red) !important;
+}
+
+/*
+====================================
+User Order History Styles (My Orders Index)
+====================================
+*/
+
+.order-history-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+    transition: box-shadow 0.3s;
+}
+
+    .order-history-card:hover {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+.order-items-preview {
+    border-top: 1px solid var(--color-border-light) !important;
+}
+
+.item-preview-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border: 1px solid var(--color-border-light);
+}
+
+.border-light-gray-lg {
+    /* Divider for medium/large screens */
+    border-right: 1px solid var(--color-border-light) !important;
+}
+
+/* Status Badges (Reused accent colors) */
+/* .bg-warning-custom, .bg-primary-accent, .bg-info-accent, .bg-success-accent, .bg-danger-custom */
+/* .text-error-accent (for Total Amount) */
+
+/*
+====================================
+User Reviews Page Styles
+====================================
+*/
+
+.user-review-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+.review-product-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border: 1px solid var(--color-border-light);
+}
+
+.review-content-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Reusing Rating Styles */
+/* .text-warning-accent (Yellow Star) */
+/* .text-muted-star (Gray Star) */
+
+/*
+====================================
+User Settings Page Styles
+====================================
+*/
+
+.settings-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    background-color: var(--color-background-light);
+}
+
+    .settings-card .card-header {
+        background-color: var(--color-background-gray) !important;
+        border-bottom: 1px solid var(--color-border-light);
+    }
+
+/* Checkbox customization (Reused from Auth) */
+.check-input-custom {
+    border-color: var(--color-primary-text);
+    /* عند التحديد يستخدم لون التمييز الأزرق */
+    background-color: var(--color-accent-blue);
+}
+
+/* Danger Zone Card */
+.danger-zone-card {
+    border: 2px solid var(--color-error-red);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .danger-zone-card .card-header {
+        /* bg-danger-custom is defined in previous steps */
+        background-color: var(--color-error-red) !important;
+        color: white;
+    }
+
+/* Reusing Accent Colors: */
+/* .bg-success-accent (Verified) */
+/* .bg-warning-custom (Not Verified) */
+/* .btn-primary-accent (Save/Change Password) */
+/* .btn-danger-custom (Delete Account) */
