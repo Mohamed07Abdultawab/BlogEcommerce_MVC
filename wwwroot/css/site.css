@@ -1,31 +1,202 @@
-html {
-  font-size: 14px;
+﻿/*
+====================================
+CSS Variables (Colors: Monochrome + Accent)
+====================================
+*/
+:root {
+    /* Monochrome & Gray Tones (Approx 80%) */
+    --color-background-light: #FFFFFF; /* الأبيض الرئيسي */
+    --color-background-gray: #F4F4F4; /* رمادي خفيف للخلفيات الثانوية */
+    --color-primary-text: #222222; /* الأسود الداكن للنصوص */
+    --color-secondary-text: #666666; /* الرمادي المتوسط للنصوص الثانوية */
+    --color-border-light: #E0E0E0; /* رمادي فاتح للحدود */
+    /* Dark Elements (Navbar, Footer, Approx 10%) */
+    --color-background-dark: #1A1A1A; /* خلفية داكنة (للناف بار والفوتير) */
+    --color-text-dark-bg: #EAEAEA; /* نص فاتح على خلفية داكنة */
+    --color-border-dark: rgba(255, 255, 255, 0.1); /* فاصل على خلفية داكنة */
+    /* Accent Colors (Approx 10% total) */
+    --color-accent-blue: #007BFF; /* الأزرق: لـ CTA (الدعوة لاتخاذ إجراء), الأزرار الرئيسية */
+    --color-accent-blue-hover: #0056b3;
+    --color-success-green: #28A745; /* الأخضر: للنجاح */
+    --color-error-red: #DC3545; /* الأحمر: للخطأ والتنبيهات */
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/*
+====================================
+General Styles
+====================================
+*/
 body {
-  margin-bottom: 60px;
+    font-family: 'Inter', sans-serif;
+    color: var(--color-primary-text);
+    background-color: var(--color-background-light);
+    line-height: 1.6;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.container-xl {
+    /* لتوسيع عرض المحتوى في الشاشات الكبيرة */
+    max-width: 1200px;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* لتجنب تداخل المحتوى مع الـ Fixed Navbar */
+.main-content-wrapper {
+    padding-top: 80px;
+}
+
+a {
+    color: var(--color-primary-text);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+    a:hover {
+        color: var(--color-accent-blue);
+        text-decoration: none;
+    }
+
+/*
+====================================
+Header (Navbar) Styles
+====================================
+*/
+.bg-custom-dark {
+    background-color: var(--color-background-dark) !important;
+}
+
+.navbar-brand {
+    color: var(--color-text-dark-bg) !important;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.logo-icon-accent {
+    /* لون التمييز الأولي لشعار الموقع */
+    color: var(--color-accent-blue);
+}
+
+.navbar-nav .nav-link {
+    color: var(--color-text-dark-bg) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    position: relative;
+    transition: color 0.3s;
+}
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+        color: var(--color-accent-blue) !important; /* لون أزرق عند الـ Hover */
+    }
+
+/* زر التسجيل (Register) المميز باللون الأزرق */
+.btn-primary-accent {
+    background-color: var(--color-accent-blue);
+    border: none;
+    color: #FFF !important;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+    .btn-primary-accent:hover {
+        background-color: var(--color-accent-blue-hover);
+    }
+
+/* عداد سلة التسوق */
+.badge-accent-bg {
+    background-color: var(--color-error-red) !important; /* الأحمر للفت الانتباه */
+    font-size: 0.7em;
+    vertical-align: top;
+    margin-left: 3px;
+}
+
+/* قائمة Dropdown (Profile) */
+.dropdown-menu-dark {
+    background-color: var(--color-background-dark);
+    border: 1px solid var(--color-border-dark);
+}
+
+    .dropdown-menu-dark .dropdown-item {
+        color: var(--color-text-dark-bg);
+    }
+
+        .dropdown-menu-dark .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.05); /* رمادي داكن فاتح عند الـ Hover */
+            color: var(--color-accent-blue);
+        }
+
+.dropdown-divider {
+    border-top-color: var(--color-border-dark);
+}
+
+/*
+====================================
+Footer Styles
+====================================
+*/
+.footer {
+    color: var(--color-text-dark-bg);
+}
+
+.footer-title {
+    font-weight: 700;
+    color: var(--color-text-dark-bg);
+}
+
+.footer-text-light {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+}
+
+.footer-link {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 0.9rem;
+    padding: 3px 0;
+    display: inline-block;
+}
+
+    .footer-link:hover {
+        color: var(--color-accent-blue) !important;
+    }
+
+/* Social Links */
+.social-link {
+    color: var(--color-text-dark-bg);
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+
+    .social-link:hover {
+        color: var(--color-accent-blue);
+    }
+
+/* Newsletter Section */
+.newsletter-input {
+    border-radius: 50px 0 0 50px !important;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text-dark-bg);
+}
+
+    .newsletter-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+.newsletter-button {
+    background-color: var(--color-accent-blue) !important;
+    border-radius: 0 50px 50px 0 !important;
+    color: #FFF !important;
+    transition: background-color 0.3s;
+}
+
+    .newsletter-button:hover {
+        background-color: var(--color-accent-blue-hover) !important;
+    }
+
+footer {
+    position: static !important;
+    white-space: normal !important;
+    line-height: normal !important;
+}
+
+main {
+    min-height: 100vh !important;
 }
