@@ -136,6 +136,31 @@ namespace BlogEcommerce.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // POST: Cart/ClearCart
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ClearCart()
+        {
+            var userId = GetUserId();
+
+            var cartItems = await _context.CartItems
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            if (cartItems.Any())
+            {
+                _context.CartItems.RemoveRange(cartItems);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Your cart has been cleared successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Your cart is already empty.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
         // GET: Cart/Checkout
         public async Task<IActionResult> Checkout()
         {
