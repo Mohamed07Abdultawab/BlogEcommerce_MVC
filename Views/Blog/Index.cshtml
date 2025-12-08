@@ -1,6 +1,9 @@
 ﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<BlogEcommerce.Models.BlogPost>
+@{
+    ViewBag.ShowFooter = true;
+}
 
 @{
     ViewData["Title"] = "Blog Posts";
