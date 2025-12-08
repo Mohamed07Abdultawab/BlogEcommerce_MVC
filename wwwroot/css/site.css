@@ -1260,3 +1260,64 @@ Order Confirmation Styles
 .text-error-accent {
     color: var(--color-error-red) !important;
 }
+
+/*
+====================================
+Authentication Forms (Login/Register)
+====================================
+*/
+
+.login-card {
+    border: 1px solid var(--color-border-light);
+    border-radius: 12px;
+    background-color: var(--color-background-light);
+}
+
+.text-primary-text {
+    color: var(--color-primary-text);
+}
+
+.text-accent-blue {
+    color: var(--color-accent-blue);
+}
+
+/* Reusing Form Controls from Admin forms */
+/* .form-control-custom (Inputs) */
+
+.check-input-custom {
+    /* تخصيص الـ Checkbox ليتناسب مع Monochrome */
+    border-color: var(--color-primary-text);
+    /* عند التحديد يستخدم لون التمييز الأزرق */
+    background-color: var(--color-accent-blue);
+}
+
+    .check-input-custom:checked {
+        background-color: var(--color-accent-blue);
+        border-color: var(--color-accent-blue);
+    }
+
+.register-link {
+    color: var(--color-accent-blue) !important;
+}
+
+.login-btn {
+    /* زر الدخول بلون التمييز (الأزرق) */
+    font-weight: 600;
+}
+
+/*
+====================================
+Access Denied / Error Page Styles
+====================================
+*/
+
+/* (Reusing text-danger-accent and btn-primary-accent) */
+
+.warning-icon-large {
+    color: var(--color-error-red); /* اللون الأحمر للتحذير */
+    opacity: 0.8;
+}
+
+.text-danger-accent {
+    color: var(--color-error-red) !important;
+}
