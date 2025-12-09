@@ -1,4 +1,25 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@inject ApplicationDbContext _context 
+
+<!--get carCount-->
+@{
+    var cartCount = 0;
+
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        cartCount = _context.CartItems
+                            .Where(c => c.UserId == userId)
+                            .Sum(c => c.Quantity);
+    }
+
+    var cartController = User.Identity?.IsAuthenticated == true ? "Cart" : "Account";
+    var cartAction = User.Identity?.IsAuthenticated == true ? "Index" : "Login";
+}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,20 +67,18 @@
                             </a>
                         </li>
 
-                        @{
-                            var cartController = User.Identity != null && User.Identity.IsAuthenticated ? "Cart" : "Account";
-                            var cartAction = User.Identity != null && User.Identity.IsAuthenticated ? "Index" : "Login";
+                        <li class="nav-item">
+                            <a class="nav-link cart-link-custom"
+                               asp-controller="@cartController"
+                               asp-action="@cartAction">
+                                <i class="fas fa-shopping-cart me-1"></i>Cart
+                                      @if (cartCount > 0)
+                                      {
+                                          <span class="badge rounded-pill badge-accent-bg" id="cartCount">!</span>
+                                      }
+                            </a>
+                        </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link cart-link-custom" asp-controller="@cartController" asp-action="@cartAction">
-                                        <i class="fas fa-shopping-cart me-1"></i> Cart 
-                                    @if (User.Identity != null && User.Identity.IsAuthenticated)
-                                    {
-                                                <span class="badge rounded-pill badge-accent-bg" id="cartCount">0</span>
-                                    }
-                                    </a>
-                                </li>
-                        }
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="AboutUs">
                                 <i class="fas fa-users me-1"></i> About Us
