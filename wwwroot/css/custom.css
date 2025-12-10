@@ -643,3 +643,32 @@ body {
         font-size: 2rem;
     }
 }
+
+/* --- AUTH PAGES STYLING --- */
+.card.shadow-custom {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.card.rounded-custom {
+    border-radius: 20px;
+}
+
+.form-control-lg {
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+}
+
+.btn-lg {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+.alert {
+    border-radius: 10px;
+}
