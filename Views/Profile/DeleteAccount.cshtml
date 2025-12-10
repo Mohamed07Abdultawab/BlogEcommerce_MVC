@@ -44,7 +44,12 @@
                         @Html.AntiForgeryToken()
                         <div class="mb-4">
                             <label for="password" class="form-label fw-bold">Enter your password to confirm:</label>
-                            <input type="password" name="password" id="password" class="form-control form-control-custom" required />
+                            <div class="input-group">
+                                <input type="password" name="password" id="password" class="form-control form-control-custom" required />
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('password')" aria-label="Toggle Password Visibility">
+                                    <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="d-grid gap-2">

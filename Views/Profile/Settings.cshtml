@@ -45,17 +45,27 @@
                     <h5 class="mb-0 fw-bold text-primary-text"><i class="fas fa-eye me-2"></i> Privacy</h5>
                 </div>
                 <div class="card-body p-4">
+
+                            @if (TempData["PreferencesUpdated"] != null)
+                            {
+                            <div class="alert alert-success-custom alert-dismissible fade show mb-4" role="alert">
+                                <i class="fas fa-check-circle me-2"></i> @TempData["PreferencesUpdated"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            }
+
                     <p class="text-secondary-text">Manage your communication preferences and data.</p>
                     <form asp-action="UpdatePreferences" method="post">
+                                @Html.AntiForgeryToken() @* إضافة Anti-Forgery Token لضمان الأمان *@
 
                         <div class="form-check mb-3">
-                            <input class="form-check-input check-input-custom" type="checkbox" id="emailNotifications" checked>
+                            <input class="form-check-input check-input-custom" type="checkbox" id="emailNotifications" name="emailNotifications" checked>
                             <label class="form-check-label text-primary-text" for="emailNotifications">
                                 Email notifications (Promotions/News)
                             </label>
                         </div>
                         <div class="form-check mb-4">
-                            <input class="form-check-input check-input-custom" type="checkbox" id="orderUpdates" checked>
+                            <input class="form-check-input check-input-custom" type="checkbox" id="orderUpdates" name="orderUpdates" checked>
                             <label class="form-check-label text-primary-text" for="orderUpdates">
                                 Essential order status updates
                             </label>

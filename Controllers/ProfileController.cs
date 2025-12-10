@@ -351,5 +351,18 @@ namespace BlogEcommerce.Controllers
 
             return View();
         }
+
+        // مثال كود C# في الكنترولر (Controller)
+
+        public IActionResult UpdatePreferences(IFormCollection form)
+        {
+            // ... منطق حفظ التفضيلات في قاعدة البيانات ...
+
+            // تعيين رسالة النجاح في TempData
+            TempData["PreferencesUpdated"] = "Your privacy preferences have been successfully saved!";
+
+            // إعادة التوجيه لنفس الصفحة
+            return RedirectToAction("Settings");
+        }
     }
 }
