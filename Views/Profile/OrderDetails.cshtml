@@ -92,10 +92,17 @@
                             @Model.Status
                         </span>
                     </p>
-                    <p class="mb-0">
+                    <p class="mb-4">
                         <strong class="small">Order Date:</strong><br />
                         @Model.OrderDate.ToString("MMMM dd, yyyy HH:mm")
                     </p>
+
+                    <div class="d-grid gap-2">
+                        <a asp-action="ViewBill" asp-route-id="@Model.Id" target="_blank" class="btn btn-success-accent btn-lg">
+                            <i class="fas fa-file-invoice-dollar me-2"></i> View Bill
+                        </a>
+                    </div>
+
                 </div>
             </div>
 

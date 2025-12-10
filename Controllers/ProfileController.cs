@@ -364,5 +364,30 @@ namespace BlogEcommerce.Controllers
             // إعادة التوجيه لنفس الصفحة
             return RedirectToAction("Settings");
         }
+
+
+        // GET: Profile/ViewBill/5
+        public async Task<IActionResult> ViewBill(int id)
+        {
+            var userId = GetUserId();
+            var user = await _userManager.FindByIdAsync(userId);
+
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .FirstOrDefaultAsync(o => o.Id == id && o.Email == user!.Email);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var billViewModel = new OrderBillViewModel
+            {
+                Order = order
+            };
+
+            return View(billViewModel);
+        }
     }
 }
