@@ -1,4 +1,10 @@
 ﻿@* User Profile: Delete Account *@
+@using Microsoft.AspNetCore.Identity
+@* @inject UserManager<ApplicationUser> UserManager
+   *//
+@* ملاحظة: يجب أن تتأكد من أن لديك نموذج مستخدم (ApplicationUser) و UserManager تم إعدادهما ومتاحان في ملف العرض الخاص بك.
+    إذا كنت تستخدم Identity في ASP.NET Core، فإن @User.IsInRole("Admin") غالباً ما يكون كافياً.
+    تأكد من تغيير "Admin" إلى اسم الدور الفعلي المستخدم لديك. *@
 @{
     ViewData["Title"] = "Delete Account";
 }
@@ -15,52 +21,76 @@
                 </div>
 
                 <div class="card-body p-4">
-                    @if (TempData["ErrorMessage"] != null)
+
+                    @* 🚨 منطق التحقق من دور المسؤول (Admin Check) 🚨 *@
+                    @if (User.IsInRole("Admin"))
                     {
-                            <div class="alert alert-danger-custom mb-4">
-                                <i class="fas fa-times-circle me-2"></i> @TempData["ErrorMessage"]
+                            <div class="alert alert-danger-custom mb-4 text-center">
+                                <h5 class="mb-2 fw-bold text-dark-link">
+                                    <i class="fas fa-lock me-2"></i> Access Denied
+                                </h5>
+                                <p class="mb-0 fs-5">
+                                    As an **Administrator** account, you are **not permitted** to delete your account through this portal.
+                                    <br/> Please contact a Super-Admin or System Support if you need to proceed with deletion.
+                                </p>
+                            </div>
+
+                            <div class="d-grid mt-4">
+                                <a asp-action="Settings" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-arrow-left me-2"></i> Back to Settings
+                                </a>
                             </div>
                     }
+                    else
+                    {
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                                    <div class="alert alert-danger-custom mb-4">
+                                        <i class="fas fa-times-circle me-2"></i> @TempData["ErrorMessage"]
+                                    </div>
+                        }
 
-                    <div class="alert alert-warning-custom-light mb-4">
-                        <h5 class="mb-2 fw-bold text-dark-link">Warning! This action cannot be undone.</h5>
-                        <p class="mb-0 small">Please read carefully before proceeding.</p>
-                    </div>
-
-                    <p class="fw-bold text-primary-text">Deleting your account will permanently remove all associated data, including:</p>
-                    <ul class="list-unstyled text-secondary-text delete-list mb-4">
-                        <li><i class="fas fa-times text-danger-accent me-2"></i> Your profile information and details</li>
-                        <li><i class="fas fa-times text-danger-accent me-2"></i> All product reviews you have written</li>
-                        <li><i class="fas fa-times text-danger-accent me-2"></i> All blog comments you have posted</li>
-                        <li><i class="fas fa-times text-danger-accent me-2"></i> Your saved cart items</li>
-                        <li><i class="fas fa-times text-danger-accent me-2"></i> Your access to order history records</li>
-                    </ul>
-
-                    <p class="text-danger-accent fw-bold fs-6 border-top pt-3">
-                        NOTE: Your past orders will remain in the system for administrative and record-keeping purposes only.
-                    </p>
-
-                    <form asp-action="DeleteAccountConfirmed" method="post">
-                        @Html.AntiForgeryToken()
-                        <div class="mb-4">
-                            <label for="password" class="form-label fw-bold">Enter your password to confirm:</label>
-                            <div class="input-group">
-                                <input type="password" name="password" id="password" class="form-control form-control-custom" required />
-                                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('password')" aria-label="Toggle Password Visibility">
-                                    <i class="fas fa-eye" id="passwordToggleIcon"></i>
-                                </button>
+                            <div class="alert alert-warning-custom-light mb-4">
+                                <h5 class="mb-2 fw-bold text-dark-link">Warning! This action cannot be undone.</h5>
+                                <p class="mb-0 small">Please read carefully before proceeding.</p>
                             </div>
-                        </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-danger-custom btn-lg delete-btn" onclick="return confirm('ARE YOU ABSOLUTELY SURE? All data will be permanently deleted!');">
-                                <i class="fas fa-trash-alt me-2"></i> Yes, Delete My Account Permanently
-                            </button>
-                            <a asp-action="Settings" class="btn btn-outline-secondary btn-lg">
-                                <i class="fas fa-times me-2"></i> Cancel
-                            </a>
-                        </div>
-                    </form>
+                            <p class="fw-bold text-primary-text">Deleting your account will permanently remove all associated data, including:</p>
+                            <ul class="list-unstyled text-secondary-text delete-list mb-4">
+                                <li><i class="fas fa-times text-danger-accent me-2"></i> Your profile information and details</li>
+                                <li><i class="fas fa-times text-danger-accent me-2"></i> All product reviews you have written</li>
+                                <li><i class="fas fa-times text-danger-accent me-2"></i> All blog comments you have posted</li>
+                                <li><i class="fas fa-times text-danger-accent me-2"></i> Your saved cart items</li>
+                                <li><i class="fas fa-times text-danger-accent me-2"></i> Your access to order history records</li>
+                            </ul>
+
+                            <p class="text-danger-accent fw-bold fs-6 border-top pt-3">
+                                NOTE: Your past orders will remain in the system for administrative and record-keeping purposes only.
+                            </p>
+
+                            <form asp-action="DeleteAccountConfirmed" method="post">
+                            @Html.AntiForgeryToken()
+                                <div class="mb-4">
+                                    <label for="password" class="form-label fw-bold">Enter your password to confirm:</label>
+                                    <div class="input-group">
+                                        <input type="password" name="password" id="password" class="form-control form-control-custom" required />
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('password')" aria-label="Toggle Password Visibility">
+                                            <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-danger-custom btn-lg delete-btn" onclick="return confirm('ARE YOU ABSOLUTELY SURE? All data will be permanently deleted!');">
+                                        <i class="fas fa-trash-alt me-2"></i> Yes, Delete My Account Permanently
+                                    </button>
+                                    <a asp-action="Settings" class="btn btn-outline-secondary btn-lg">
+                                        <i class="fas fa-times me-2"></i> Cancel
+                                    </a>
+                                </div>
+                            </form>
+                    }
+                    @* 🛑 نهاية منطق التحقق من دور المسؤول 🛑 *@
                 </div>
             </div>
         </div>
