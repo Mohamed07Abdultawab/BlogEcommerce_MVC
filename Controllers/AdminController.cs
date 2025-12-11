@@ -276,6 +276,8 @@ namespace BlogEcommerce.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCartItemQuantity(int id, int quantity, string userId)
         {
+            // *** 🚨 التحديث: منع تعديل الكمية مباشرة (Admin should only clear/delete) ***
+
             var cartItem = await _context.CartItems
                 .Include(c => c.Product)
                 .FirstOrDefaultAsync(c => c.Id == id);
@@ -285,22 +287,30 @@ namespace BlogEcommerce.Controllers
                 return NotFound();
             }
 
-            if (quantity <= 0)
+            // إذا كان الأدمن يحاول الزيادة أو النقصان عبر الزر، سيصل هنا
+            if (quantity > 0 && quantity != cartItem.Quantity)
             {
-                _context.CartItems.Remove(cartItem);
-                TempData["SuccessMessage"] = "Item removed from cart.";
-            }
-            else if (quantity > cartItem.Product!.Stock)
-            {
-                TempData["ErrorMessage"] = $"Only {cartItem.Product.Stock} items available in stock.";
+                // نمنع الأدمن من تغيير الكمية بشكل مباشر ونوجهه إلى خيار الحذف إذا لزم الأمر
+                TempData["ErrorMessage"] = "Admins are not allowed to modify item quantity directly. Please use the Delete button if necessary.";
                 return RedirectToAction(nameof(UserCart), new { userId = userId });
             }
-            else
+
+            if (quantity <= 0)
+            {
+                // السماح بالإزالة فقط (Clear/Delete)
+                _context.CartItems.Remove(cartItem);
+                TempData["SuccessMessage"] = "Item removed from cart.";
+                await _context.SaveChangesAsync();
+            }
+
+            // إزالة السطر الذي كان يقوم بتحديث الكمية:
+            /* else
             {
                 cartItem.Quantity = quantity;
                 _context.Update(cartItem);
                 TempData["SuccessMessage"] = "Quantity updated successfully!";
             }
+            */
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(UserCart), new { userId = userId });

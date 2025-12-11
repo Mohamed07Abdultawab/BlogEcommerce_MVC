@@ -45,9 +45,9 @@
                                         <tr class="table-header-monochrome">
                                             <th>Product</th>
                                             <th>Price</th>
-                                            <th>Quantity</th>
+                                            <th style="width: 100px;">Quantity</th>
                                             <th>Subtotal</th>
-                                            <th>Actions</th>
+                                            <th style="width: 100px;">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -71,20 +71,8 @@
                                                 </td>
                                                 <td class="align-middle">$@item.Product.Price.ToString("N2")</td>
 
-                                                <td class="align-middle">
-                                                    <form asp-action="UpdateCartItemQuantity" method="post" class="d-inline update-qty-form">
-                                                    @Html.AntiForgeryToken()
-                                                        <input type="hidden" name="id" value="@item.Id" />
-                                                        <input type="hidden" name="userId" value="@ViewBag.UserId" />
-                                                        <div class="input-group input-group-sm quantity-control-admin">
-                                                            <button type="submit" name="quantity" value="@(item.Quantity - 1)" 
-                                                                    class="btn btn-outline-dark-custom btn-monochrome-qty" @(item.Quantity == 1 ? "disabled" : "")>-</button>
-
-                                                            <input type="number" class="form-control form-control-sm text-center cart-qty-input" value="@item.Quantity" readonly>
-
-                                                            <button type="submit" name="quantity" value="@(item.Quantity + 1)" class="btn btn-outline-dark-custom btn-monochrome-qty">+</button>
-                                                        </div>
-                                                    </form>
+                                                <td class="align-middle text-center">
+                                                    <span class="fw-bold fs-5 text-primary-text">@item.Quantity</span>
                                                 </td>
 
                                                 <td class="align-middle"><strong class="text-error-accent">$@subtotal.ToString("N2")</strong></td>
@@ -139,7 +127,7 @@
                             <h6 class="mb-0 fw-bold text-primary-text">Admin Insight</h6>
                         </div>
                         <div class="card-body small">
-                            <p class="text-muted mb-0">This view allows you to see what items this user has left behind. You can adjust quantities or clear the cart if needed.</p>
+                            <p class="text-muted mb-0">This view allows you to review and clear the user's cart. Direct quantity modification is restricted.</p>
                         </div>
                     </div>
                 </div>
@@ -171,7 +159,6 @@
 
 @section Scripts {
         <script>
-            // JS functions remain the same
             function deleteItem(itemId, userId, productName) {
                 if (confirm(`Are you sure you want to remove "${productName}" from this cart?`)) {
                     document.getElementById('deleteItemId').value = itemId;

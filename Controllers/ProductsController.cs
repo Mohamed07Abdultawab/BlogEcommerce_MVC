@@ -128,14 +128,20 @@ namespace BlogEcommerce.Controllers
                 return NotFound();
             }
 
-            // Check if user is admin or review owner
-            if (!User.IsInRole("Admin") && review.UserName != User.Identity?.Name)
+            // 🚨 التحديث: السماح بالتعديل فقط إذا كان المستخدم الحالي هو صاحب التقييم (Review)
+            // تم إزالة شرط: User.IsInRole("Admin")
+            if (review.UserName != User.Identity?.Name)
             {
+                // إذا حاول المسؤول أو أي مستخدم آخر التعديل، يتم منعه
+                TempData["ErrorMessage"] = "You do not have permission to edit this review.";
                 return Forbid();
             }
 
+            // السماح بالتعديل
             review.Rating = rating;
             review.Comment = comment;
+            review.ReviewDate = DateTime.Now; // يُفضل تحديث تاريخ التعديل
+
             _context.Update(review);
             await _context.SaveChangesAsync();
 
