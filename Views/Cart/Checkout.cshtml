@@ -1,7 +1,13 @@
-﻿@model BlogEcommerce.Models.Order
-
+﻿@model BlogEcommerce.Models.CheckoutViewModel 
 @{
     ViewData["Title"] = "Secure Checkout";
+
+
+    // الإجماليات أصبحت متوفرة من الـ ViewModel
+    var subtotal = Model.Subtotal;
+    var totalItemsCount = Model.TotalItemsCount;
+    var shippingCost = 0.00m; // يمكن جعلها ديناميكية لاحقًا
+    var grandTotal = subtotal + shippingCost;
 }
 
 <div class="container-xl py-5">
@@ -22,39 +28,39 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-4">
-                                <label asp-for="CustomerName" class="form-label fw-bold small">Full Name</label>
-                                <input asp-for="CustomerName" class="form-control form-control-custom" required />
-                                <span asp-validation-for="CustomerName" class="text-danger small"></span>
+                                <label asp-for="Order.CustomerName" class="form-label fw-bold small">Full Name</label>
+                                <input asp-for="Order.CustomerName" class="form-control form-control-custom" required />
+                                <span asp-validation-for="Order.CustomerName" class="text-danger small"></span>
                             </div>
                             <div class="col-md-6 mb-4">
-                                <label asp-for="Email" class="form-label fw-bold small">Email Address</label>
-                                <input asp-for="Email" type="email" class="form-control form-control-custom" required />
-                                <span asp-validation-for="Email" class="text-danger small"></span>
+                                <label asp-for="Order.Email" class="form-label fw-bold small">Email Address</label>
+                                <input asp-for="Order.Email" type="email" class="form-control form-control-custom" required />
+                                <span asp-validation-for="Order.Email" class="text-danger small"></span>
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="Phone" class="form-label fw-bold small">Phone Number</label>
-                            <input asp-for="Phone" class="form-control form-control-custom" required />
-                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                            <label asp-for="Order.Phone" class="form-label fw-bold small">Phone Number</label>
+                            <input asp-for="Order.Phone" class="form-control form-control-custom" required />
+                            <span asp-validation-for="Order.Phone" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="Address" class="form-label fw-bold small">Street Address</label>
-                            <input asp-for="Address" class="form-control form-control-custom" required />
-                            <span asp-validation-for="Address" class="text-danger small"></span>
+                            <label asp-for="Order.Address" class="form-label fw-bold small">Street Address</label>
+                            <input asp-for="Order.Address" class="form-control form-control-custom" required />
+                            <span asp-validation-for="Order.Address" class="text-danger small"></span>
                         </div>
 
                         <div class="row">
                             <div class="col-md-8 mb-4">
-                                <label asp-for="City" class="form-label fw-bold small">City</label>
-                                <input asp-for="City" class="form-control form-control-custom" required />
-                                <span asp-validation-for="City" class="text-danger small"></span>
+                                <label asp-for="Order.City" class="form-label fw-bold small">City</label>
+                                <input asp-for="Order.City" class="form-control form-control-custom" required />
+                                <span asp-validation-for="Order.City" class="text-danger small"></span>
                             </div>
                             <div class="col-md-4 mb-4">
-                                <label asp-for="ZipCode" class="form-label fw-bold small">Zip Code</label>
-                                <input asp-for="ZipCode" class="form-control form-control-custom" required />
-                                <span asp-validation-for="ZipCode" class="text-danger small"></span>
+                                <label asp-for="Order.ZipCode" class="form-label fw-bold small">Zip Code</label>
+                                <input asp-for="Order.ZipCode" class="form-control form-control-custom" required />
+                                <span asp-validation-for="Order.ZipCode" class="text-danger small"></span>
                             </div>
                         </div>
 
@@ -92,21 +98,37 @@
         <div class="col-lg-5">
             <div class="card order-summary-card shadow-lg sticky-top mb-4">
                  <div class="card-body p-4">
-                     <h5 class="card-title fw-bold order-summary-title mb-3">Your Order (3 Items)</h5>
+                     <h5 class="card-title fw-bold order-summary-title mb-3">
+                         Your Order (@totalItemsCount Items)
+                     </h5>
                      <hr class="summary-divider" />
+
                      <div class="d-flex justify-content-between mb-2 summary-row">
                          <span>Subtotal:</span>
-                         <span>$150.00</span>
+                         <span>$@subtotal.ToString("N2")</span>
                      </div>
+
                      <div class="d-flex justify-content-between mb-2 summary-row">
                          <span>Shipping:</span>
-                         <span class="text-success-accent fw-bold">Free</span>
+                         <span class="text-success-accent fw-bold">@(shippingCost == 0 ? "FREE" : shippingCost.ToString("C2"))</span>
                      </div>
+
                      <hr class="summary-divider" />
+
                      <div class="d-flex justify-content-between mb-0 total-row">
                          <strong class="fs-4">Total Due:</strong>
-                         <strong class="fs-3 text-error-accent">$150.00</strong>
+                         <strong class="fs-3 text-error-accent">$@grandTotal.ToString("N2")</strong>
                      </div>
+
+                     <hr class="summary-divider mt-4" />
+                     <p class="fw-bold small text-primary-text mb-2">Items in Cart:</p>
+                     <ul class="list-unstyled small text-secondary-text ps-3">
+                                @foreach (var item in Model.CartItems)
+                                {
+                                 <li>@item.Product.Name (x@item.Quantity)</li>
+                                }
+                     </ul>
+
                  </div>
             </div>
 

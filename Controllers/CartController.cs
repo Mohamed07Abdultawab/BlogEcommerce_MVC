@@ -161,10 +161,11 @@ namespace BlogEcommerce.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Cart/Checkout
         public async Task<IActionResult> Checkout()
         {
+            // نفترض أن دالة GetUserId() موجودة ومعرفة
             var userId = GetUserId();
+            var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
 
             var cartItems = await _context.CartItems
                 .Include(c => c.Product)
@@ -177,7 +178,7 @@ namespace BlogEcommerce.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Check stock availability
+            // 1. التحقق من توافر المخزون
             foreach (var item in cartItems)
             {
                 if (item.Product!.Stock < item.Quantity)
@@ -187,13 +188,21 @@ namespace BlogEcommerce.Controllers
                 }
             }
 
-            // Pre-fill customer info if user email is available
-            var order = new Order
+            // 2. حساب الإجمالي
+            var subtotal = cartItems.Sum(item => item.Product!.Price * item.Quantity);
+
+            // 3. بناء الـ ViewModel
+            var viewModel = new CheckoutViewModel
             {
-                Email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty
+                Order = new Order
+                {
+                    Email = userEmail
+                },
+                CartItems = cartItems,
+                Subtotal = subtotal
             };
 
-            return View(order);
+            return View(viewModel);
         }
 
         // POST: Cart/PlaceOrder
